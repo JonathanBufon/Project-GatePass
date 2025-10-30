@@ -4,26 +4,41 @@ security:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
-        users_in_memory: { memory: null }
+        # used to reload user from session & other features (e.g. switch_user)
+        app_user_provider:
+            entity:
+                class: App\Entity\Usuario
+                property: email
+
+    role_hierarchy:
+      ROLE_VENDEDOR: ROLE_USER
+      ROLE_ADMIN: [ ROLE_VENDEDOR, ROLE_USER ] # (Admin (futuro) herda tudo)
+
     firewalls:
-        dev:
-            pattern: ^/(_(profiler|wdt)|css|images|js)/
-            security: false
-        main:
-            lazy: true
-            provider: users_in_memory
+      dev:
+        pattern: ^/(_(profiler|wdt)|css|images|js)/
+        security: false
+      main:
+        lazy: true
+        provider: app_user_provider # Nível 1 dentro de 'main'
 
-            # activate different ways to authenticate
-            # https://symfony.com/doc/current/security.html#the-firewall
+        # Nível 1 dentro de 'main'
+        form_login:
+          login_path: app_login
+          check_path: app_login
+          enable_csrf: true
 
-            # https://symfony.com/doc/current/security/impersonating_user.html
-            # switch_user: true
+        logout:
+          path: app_logout
+          target: app_home # (Você precisará criar esta rota 'app_home'
 
-    # Easy way to control access for large sections of your site
-    # Note: Only the *first* access control that matches will be used
     access_control:
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
+      - { path: ^/auth, roles: PUBLIC_ACCESS }
+      - { path: ^/pedido, roles: ROLE_USER }
+      - { path: ^/checkout, roles: ROLE_USER }
+      - { path: ^/vendedor, roles: ROLE_VENDEDOR }
 
 when@test:
     security:

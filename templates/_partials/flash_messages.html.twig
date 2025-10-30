@@ -1,0 +1,13 @@
+{#
+Este template é responsável por renderizar todas as 'flash messages'
+armazenadas na sessão pelo Controller.
+#}
+{% for label, messages in app.flashes %}
+    {% for message in messages %}
+        {# Usamos as classes de Alerta do Bootstrap 5.2 #}
+        <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+{% endfor %}
