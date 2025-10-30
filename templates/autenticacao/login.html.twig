@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Login - GatePass{% endblock %}
+
+{# 1. Reutilizamos a classe de controle do 'sign-in' #}
+{% block body_class %}body-signin text-center{% endblock %}
+
+{# 2. Reutilizamos o MESMO CSS (Princípio DRY) #}
+{% block stylesheets %}
+    <link href="{{ asset('assets/css/registro/style.css') }}" rel="stylesheet">
+{% endblock %}
+
+{# 3. Removemos header e footer #}
+{% block header %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{# 4. Sobrescrevemos o wrapper #}
+{% block main_content_wrapper %}
+    <main class="form-signin w-100 m-auto">
+
+        {# Inclui flash messages (ex: 'Registro com sucesso!') #}
+        {% include '_partials/flash_messages.html.twig' %}
+
+        {# O 'action' deve apontar para a ROTA de login ('app_login') #}
+        <form method="post" action="{{ path('app_login') }}">
+
+            <h1 class="h3 mb-3 fw-normal">Fazer Login</h1>
+
+            {# Exibe erros de autenticação (ex: senha errada) #}
+            {% if error %}
+                <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+            {% endif %}
+
+            {# Campo Email (name="_username" é obrigatório pelo Symfony) #}
+            <div class.form-floating mb-2">
+            <input type="email" value="{{ last_username }}" name="_username" id="inputEmail" class="form-control" autocomplete="email" required autofocus>
+            <label for="inputEmail">Email</label>
+            </div>
+
+            {# Campo Senha (name="_password" é obrigatório pelo Symfony) #}
+            <div class.form-floating mb-3">
+            <input type="password" name="_password" id="inputPassword" class="form-control" autocomplete="current-password" required>
+            <label for="inputPassword">Senha</label>
+            </div>
+
+            {# Campo CSRF (name="_csrf_token" é obrigatório) #}
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+            {# (Opcional: Checkbox "Lembrar-me") #}
+            {#
+            <div class="checkbox mb-3">
+                <label>
+                    <input type="checkbox" name="_remember_me"> Lembrar-me
+                </label>
+            </div>
+            #}
+
+            <button class="w-100 btn btn-lg btn-primary" type="submit">
+                Entrar
+            </button>
+
+            <p class="mt-3">
+                Não tem uma conta? <a href="{{ path('app_registro') }}">Registrar</a>
+            </p>
+        </form>
+    </main>
+{% endblock %}

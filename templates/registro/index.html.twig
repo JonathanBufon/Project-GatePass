@@ -1,0 +1,77 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Registrar - GatePass{% endblock %}
+
+{# 1. Adicionamos a classe de controle no body para o CSS carregar #}
+{% block body_class %}body-signin text-center{% endblock %}
+
+{# 2. Incluímos nosso CSS específico da página #}
+{% block stylesheets %}
+    {{ parent() }} {# Opcional, se precisar do 'style.css' global #}
+    <link href="{{ asset('assets/css/registro/style.css') }}" rel="stylesheet">
+{% endblock %}
+
+{# 3. Removemos o header e footer padrão da base #}
+{% block header %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{#
+4. Sobrescrevemos o WRAPPER principal (e não o 'main_content')
+   para remover o <main> e <div class="container"> padrões.
+#}
+{% block main_content_wrapper %}
+    <main class="form-signin w-100 m-auto">
+
+        {# Incluímos as flash messages DENTRO do nosso layout customizado #}
+        {% include '_partials/flash_messages.html.twig' %}
+
+        {{ form_start(registrationForm, {'attr': {'novalidate': 'novalidate'}}) }}
+
+        <h1 class="h3 mb-3 fw-normal">Criar sua Conta</h1>
+
+        <div class="form-floating mb-2">
+            {{ form_widget(registrationForm.email) }}
+            {{ form_label(registrationForm.email) }}
+            {{ form_errors(registrationForm.email) }}
+        </div>
+
+        <div class="form-floating mb-2">
+            {{ form_widget(registrationForm.nomeCompleto) }}
+            {{ form_label(registrationForm.nomeCompleto) }}
+            {{ form_errors(registrationForm.nomeCompleto) }}
+        </div>
+
+        <div class="form-floating mb-2">
+            {{ form_widget(registrationForm.cpf) }}
+            {{ form_label(registrationForm.cpf) }}
+            {{ form_errors(registrationForm.cpf) }}
+        </div>
+
+        {# Campos de Senha (Adicionado classes 'first' e 'second' para o CSS) #}
+        <div class="form-floating mb-2">
+            {{ form_widget(registrationForm.plainPassword.first, {'attr': {'class': 'first'}}) }}
+            {{ form_label(registrationForm.plainPassword.first) }}
+            {{ form_errors(registrationForm.plainPassword.first) }}
+        </div>
+        <div class="form-floating mb-3">
+            {{ form_widget(registrationForm.plainPassword.second, {'attr': {'class': 'second'}}) }}
+            {{ form_label(registrationForm.plainPassword.second) }}
+            {{ form_errors(registrationForm.plainPassword.second) }}
+        </div>
+
+        <div class="checkbox mb-3">
+            <label>
+                {{ form_widget(registrationForm.agreeTerms) }}
+                {{ form_label(registrationForm.agreeTerms) }}
+            </label>
+            {{ form_errors(registrationForm.agreeTerms) }}
+        </div>
+
+        <button class="w-100 btn btn-lg btn-primary" type="submit">Registrar</button>
+
+        <p class="mt-3">
+            Já tem uma conta? <a href="{{ path('app_login') }}">Fazer Login</a>
+            </a
+        {{ form_end(registrationForm) }}
+    </main>
+{% endblock %}

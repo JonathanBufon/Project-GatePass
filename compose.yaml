@@ -1,20 +1,17 @@
 
 services:
-###> doctrine/doctrine-bundle ###
   database:
-    image: postgres:${POSTGRES_VERSION:-16}-alpine
+    image: mariadb:10.11 # Utilizando uma versão LTS estável do MariaDB
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-app}
-      # You should definitely change the password in production
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-!ChangeMe!}
-      POSTGRES_USER: ${POSTGRES_USER:-app}
+      MARIADB_DATABASE: gatepass_db
+      MARIADB_USER: gatepass_user
+      MARIADB_PASSWORD: gatepass_pass # Utilize uma senha forte em .env.local
+      MARIADB_ROOT_PASSWORD: root_pass # Utilize uma senha forte em .env.local
     volumes:
-      - database_data:/var/lib/postgresql/data:rw
-      # You may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!
-      # - ./docker/db/data:/var/lib/postgresql/data:rw
-###< doctrine/doctrine-bundle ###
+      - database_data:/var/lib/mysql
+    ports:
+      # Mapeia a porta 3306 do contêiner para a 3306 da sua máquina local
+      - "3311:3306"
 
 volumes:
-###> doctrine/doctrine-bundle ###
   database_data:
-###< doctrine/doctrine-bundle ###
