@@ -1,0 +1,121 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Finalizar Compra - Checkout{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+{% endblock %}
+
+{# O template Checkout não tem o footer padrão #}
+{% block footer %}{% endblock %}
+
+{% block main_content_wrapper %}
+    <div class="container" style="padding-top: 80px;">
+        <main>
+            <div class="py-5 text-center">
+                <h2>Checkout</h2>
+                <p class="lead">Por favor, preencha seus dados para finalizar a compra. (Ambiente de simulação)</p>
+            </div>
+
+            {#
+            O formulário (DTO) engloba as duas colunas
+            e aponta para a rota de submissão (app_checkout_submit)
+            #}
+            {{ form_start(checkoutForm, {'action': path('app_checkout_submit')}) }}
+
+            <div class="row g-5">
+                {# Coluna 1: Resumo do Pedido (Itens do Pedido PENDENTE) #}
+                <div class="col-md-5 col-lg-4 order-md-last">
+                    <h4 class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="text-primary">Seu Pedido (Carrinho)</span>
+                        <span class="badge bg-primary rounded-pill">{{ pedido.ingressos|length }}</span>
+                    </h4>
+
+                    <ul class="list-group mb-3">
+                        {#
+                        No modelo "Carrinho Persistente", iteramos sobre
+                        os ingressos agrupados (ou ingressos individuais) do Pedido
+                        #}
+                        {# Assumindo que o Pedido->recalcularTotal() atualizou o total #}
+
+                        {# Vamos agrupar os ingressos por lote para exibição #}
+                        {% set ingressosAgrupados = {} %}
+                        {% for ingresso in pedido.ingressos %}
+                            {% set loteId = ingresso.lote.id %}
+                            {% if loteId not in ingressosAgrupados|keys %}
+                                {% set ingressosAgrupados = ingressosAgrupados|merge({
+                                    (loteId): {
+                                        'lote': ingresso.lote,
+                                        'quantidade': 0,
+                                        'subtotal': 0
+                                    }
+                                }) %}
+                            {% endif %}
+
+                            {% set item = ingressosAgrupados[loteId] %}
+                            {% set ingressosAgrupados = ingressosAgrupados|merge({
+                                (loteId): item|merge({
+                                    'quantidade': item.quantidade + 1,
+                                    'subtotal': item.subtotal + ingresso.valorPago
+                                })
+                            }) %}
+                        {% endfor %}
+
+                        {% for item in ingressosAgrupados %}
+                            <li class="list-group-item d-flex justify-content-between lh-sm">
+                                <div>
+                                    <h6 class="my-0">{{ item.lote.evento.nome }}</h6>
+                                    <small class="text-muted">{{ item.lote.nome }} (Qtd: {{ item.quantidade }})</small>
+                                </div>
+                                <span class="text-muted">R$ {{ item.subtotal|number_format(2, ',', '.') }}</span>
+                            </li>
+                        {% endfor %}
+
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Total (BRL)</span>
+                            <strong>R$ {{ pedido.total|number_format(2, ',', '.') }}</strong>
+                        </li>
+                    </ul>
+                </div>
+
+                {# Coluna 2: Formulário de Checkout (DTO) #}
+                <div class="col-md-7 col-lg-8">
+                    <h4 class="mb-3">Informações do Comprador</h4>
+
+                    <div class="row g-3">
+                        <div class="col-12">
+                            {{ form_row(checkoutForm.nomeCompleto) }}
+                        </div>
+
+                        <div class="col-12">
+                            {{ form_row(checkoutForm.email) }}
+                        </div>
+
+                        <div class="col-12">
+                            {{ form_row(checkoutForm.cpf) }}
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <h4 class="mb-3">Pagamento (Simulação)</h4>
+
+                    {# Renderiza os radio buttons (Pix, Cartão) #}
+                    {{ form_row(checkoutForm.formaPagamento) }}
+
+                    {# Renderiza o token CSRF (campo oculto) #}
+                    {{ form_widget(checkoutForm._token) }}
+
+                    <hr class="my-4">
+
+                    <button class="w-100 btn btn-primary btn-lg" type="submit">
+                        Finalizar Compra e Pagar
+                    </button>
+                </div>
+            </div>
+
+            {{ form_end(checkoutForm) }}
+        </main>
+    </div>
+{% endblock %}

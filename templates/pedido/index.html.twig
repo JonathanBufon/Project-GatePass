@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Compra Confirmada! (Pedido #{{ pedido.id }}) - GatePass{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+{% endblock %}
+
+{# A página de confirmação não tem o footer padrão #}
+{% block footer %}{% endblock %}
+
+{# Usamos o main_content_wrapper para manter o espaçamento da navbar #}
+{% block main_content_wrapper %}
+    <div class="container py-5" style="padding-top: 80px !important;">
+        <main>
+            {# 1. O Jumbotron (Template de Confirmação) #}
+            <div class="p-5 mb-4 bg-light rounded-3 shadow-sm">
+                <div class="container-fluid py-5 text-center">
+                    <i class="bi bi-check-circle-fill text-success" style="font-size: 3rem;"></i>
+                    <h1 class="display-5 fw-bold mt-3">Compra Realizada com Sucesso!</h1>
+                    <p class="fs-4">
+                        Seu pedido <strong>#{{ pedido.id }}</strong> foi processado com sucesso.
+                    </p>
+                    <p class="lead">
+                        O valor total foi de <strong>R$ {{ pedido.total|number_format(2, ',', '.') }}</strong>
+                        {% if pedido.dataPagamento %} (pago em {{ pedido.dataPagamento|date('d/m/Y H:i') }}){% endif %}.
+                    </p>
+
+                    <a href="{{ path('app_home') }}" class="btn btn-primary btn-lg mt-3" type="button">
+                        <i class="bi bi-arrow-left me-1"></i> Voltar para Home
+                    </a>
+                </div>
+            </div>
+
+            {# 2. Detalhes dos Ingressos Gerados #}
+            <div class="row align-items-md-stretch">
+                <div class="col-md-12">
+                    <div class="h-100 p-5 bg-white border rounded-3 shadow-sm">
+                        <h2>Seus Ingressos ({{ pedido.ingressos|length }})</h2>
+                        <p>Apresente os códigos abaixo na entrada do evento. (Um e-mail de confirmação também foi enviado).</p>
+
+                        <div class="list-group">
+                            {% for ingresso in pedido.ingressos %}
+                                {# Garantimos que só mostramos ingressos CONFIRMADOS (status 'PAGO' do Pedido) #}
+                                {% if ingresso.status == 'CONFIRMADO' %}
+                                    <div class="list-group-item list-group-item-action flex-column align-items-start mt-2 border-success border-2 rounded">
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <h5 class="mb-1 text-success">{{ ingresso.lote.evento.nome }}</h5>
+                                            <span class="badge bg-success rounded-pill">{{ ingresso.status }}</span>
+                                        </div>
+                                        <p class="mb-1">{{ ingresso.lote.nome }} (Valor Pago: R$ {{ ingresso.valorPago|number_format(2, ',', '.') }})</p>
+                                        <small class="text-muted">Código do Ingresso:</small>
+                                        <h6 class="font-monospace text-primary fw-bold fs-5">{{ ingresso.codigoUnico }}</h6>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+{% endblock %}
