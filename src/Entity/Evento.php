@@ -25,6 +25,8 @@ class Evento
     #[ORM\Column(length: 255)]
     private ?string $local = null;
 
+    // Nota: O plano original mencionava 'dataEvento', mas o código usa 'dataHoraInicio' e 'dataHoraFim'.
+    // Manteremos os campos existentes. O EventoFormType (próxima etapa) deverá refleti-los.
     #[ORM\Column]
     private ?\DateTime $dataHoraInicio = null;
 
@@ -50,9 +52,16 @@ class Evento
     #[ORM\JoinColumn(nullable: false)]
     private ?Vendedor $vendedor = null;
 
+    /**
+     * Construtor da entidade Evento.
+     * Inicializa coleções e aplica regras de negócio de estado padrão.
+     */
     public function __construct()
     {
         $this->lotes = new ArrayCollection();
+
+        // Tarefa 1: Aplicar a regra de negócio de status inicial.
+        $this->status = 'RASCUNHO';
     }
 
     public function getId(): ?int
@@ -127,6 +136,9 @@ class Evento
 
     public function setStatus(string $status): static
     {
+        // Futuramente, este 'setter' pode ser privatizado ou conter
+        // lógica de transição de estado (State Pattern),
+        // mas por enquanto, o construtor resolve o estado inicial.
         $this->status = $status;
 
         return $this;
