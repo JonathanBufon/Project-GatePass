@@ -1,0 +1,6 @@
+/*
+ * CSS específico para o layout 'Checkout' do Bootstrap.
+ */
+.container-checkout {
+    max-width: 960px;
+}
