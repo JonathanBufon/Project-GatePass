@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Evento;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -13,7 +14,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * @author Jonathan Bufon
  * Define o formulário (DTO) para a criação e edição de Eventos.
  * Vinculado diretamente à entidade App\Entity\Evento.
  */
@@ -32,7 +32,7 @@ class EventoFormType extends AbstractType
             ])
             ->add('dataHoraInicio', DateTimeType::class, [
                 'label' => 'Data e Hora de Início',
-                'widget' => 'single_text', // Renderiza como <input type="datetime-local">
+                'widget' => 'single_text',
                 'attr' => ['class' => 'form-control']
             ])
             ->add('dataHoraFim', DateTimeType::class, [
@@ -53,13 +53,22 @@ class EventoFormType extends AbstractType
                 'label' => 'URL do Banner (Opcional)',
                 'required' => false,
                 'attr' => ['class' => 'form-control', 'placeholder' => 'https://...']
+            ])
+
+            ->add('lotes', CollectionType::class, [
+                'entry_type' => LoteFormType::class,
+                'entry_options' => ['label' => false],
+                'allow_add' => true,
+                'allow_delete' => true,
+                'by_reference' => false,
+                'label' => 'Lotes de Ingressos',
+                'prototype_name' => '__lote_proto__',
             ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            // Vincula este formulário (DTO) diretamente à entidade Evento.
             'data_class' => Evento::class,
         ]);
     }

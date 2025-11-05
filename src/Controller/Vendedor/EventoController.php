@@ -85,4 +85,38 @@ class EventoController extends AbstractController
             'page_title' => 'Editar Evento: ' . $evento->getNome()
         ]);
     }
+
+    /**
+     * TAREFA 2: Orquestra a ação de "Publicar" um evento.
+     * Esta rota aceita apenas POST e é protegida por CSRF.
+     */
+    #[Route('/{id}/publicar', name: 'app_vendedor_evento_publicar', methods: ['POST'], requirements: ['id' => '\d+'])]
+    public function publicar(Request $request, Evento $evento, EventoService $eventoService): Response
+    {
+        // Regra de Negócio (Segurança): Garantir que o vendedor logado é o dono do evento.
+        /** @var Usuario $usuario */
+        $usuario = $this->getUser();
+        if (!$usuario->getVendedor() || $evento->getVendedor() !== $usuario->getVendedor()) {
+            throw new AccessDeniedHttpException('Você não tem permissão para publicar este evento.');
+        }
+
+        // Segurança (CSRF): Validar o token enviado pelo formulário no dashboard.
+        $token = $request->request->get('_token');
+        if (!$this->isCsrfTokenValid('publicar' . $evento->getId(), $token)) {
+            $this->addFlash('error', 'Token de segurança inválido.');
+            return $this->redirectToRoute('app_vendedor_dashboard');
+        }
+
+        try {
+            // Delega a lógica de negócio (regras de transição de estado) para o Serviço
+            $eventoService->publicarEvento($evento);
+            $this->addFlash('success', 'Evento "' . $evento->getNome() . '" foi publicado com sucesso.');
+
+        } catch (\LogicException $e) {
+            // Captura falhas das regras de negócio (ex: sem lotes)
+            $this->addFlash('error', $e->getMessage());
+        }
+
+        return $this->redirectToRoute('app_vendedor_dashboard');
+    }
 }

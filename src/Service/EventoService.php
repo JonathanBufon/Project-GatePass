@@ -22,15 +22,12 @@ class EventoService
 
     /**
      * Lógica de negócio para criar um novo evento.
-     *
-     * @param Evento $evento A entidade Evento (DTO preenchido pelo formulário).
-     * @param Vendedor $vendedor O Vendedor autenticado (dono do evento).
      */
     public function criarNovoEvento(Evento $evento, Vendedor $vendedor): void
     {
         $evento->setVendedor($vendedor);
 
-        // Regra de Negócio: O status 'RASCUNHO' já foi aplicado
+        // Regra de Negócio: O status 'RASCUNHO' já foi aplicado 
         // pela Entidade Evento em seu construtor.
 
         $this->em->persist($evento);
@@ -39,31 +36,43 @@ class EventoService
 
     /**
      * Lógica de negócio para atualizar um evento.
-     *
-     * @param Evento $evento A entidade Evento já modificada pelo formulário (DTO).
      */
     public function atualizarEvento(Evento $evento): void
     {
-        // O Symfony Form (DTO) já hidratou a entidade $evento
-        // com os novos dados vindos da Request.
-
-        // Lógica de Negócio (Exemplo futuro): [cite: 1710]
-        // if ($evento->getStatus() === 'PUBLICADO' && $evento->getCapacidadeTotal() < $evento->getCapacidadeAtual()) {
-        //     throw new \Exception('Não é possível reduzir a capacidade abaixo das vendas atuais.');
-        // }
-
-        // Apenas chamamos flush(), pois a entidade $evento já está
-        // sendo gerenciada pelo EntityManager (foi buscada pelo ParamConverter).
+        // A entidade $evento já está sendo gerenciada pelo EntityManager
         $this->em->flush();
     }
 
     /**
-     * Busca todos os eventos visíveis para o cliente.
+     * TAREFA 1: Lógica de negócio para publicar um evento.
+     * Contém as regras de transição de estado.
      *
+     * @throws \LogicException Se as regras de negócio não forem atendidas.
+     */
+    public function publicarEvento(Evento $evento): void
+    {
+        // Regra de Negócio 1: Só é possível publicar eventos em RASCUNHO.
+        if ($evento->getStatus() !== 'RASCUNHO') {
+            throw new \LogicException('Este evento não pode ser publicado, pois não está em modo Rascunho.');
+        }
+
+        // Regra de Negócio 2: Não publicar eventos sem lotes.
+        if ($evento->getLotes()->isEmpty()) {
+            throw new \LogicException('Este evento não pode ser publicado, pois não possui lotes de ingressos cadastrados.');
+        }
+
+        // Transição de Estado
+        $evento->setStatus('PUBLICADO');
+
+        // Persistência
+        $this->em->flush();
+    }
+
+
+    /**
+     * Busca todos os eventos visíveis para o cliente.
      * Regra de Negócio: Apenas eventos 'PUBLICADO' são listados.
      * Regra de Negócio: Eventos são ordenados pela data de início (mais próximos primeiro).
-     *
-     * @return array Um array de entidades Evento.
      */
     public function getEventosPublicados(): array
     {
@@ -74,13 +83,9 @@ class EventoService
     }
 
     /**
-     * Busca um evento específico por ID,
-     * mas apenas se ele estiver publicado.
-     *
+     * Busca um evento específico por ID, mas apenas se ele estiver publicado.
      * Regra de Negócio: Um cliente não pode visualizar
      * eventos em 'RASCUNHO' ou 'CANCELADO' pela página pública.
-     *
-     * @return Evento|null Retorna a entidade ou null se não encontrar
      */
     public function findEventoPublicado(int $id): ?Evento
     {
@@ -92,7 +97,7 @@ class EventoService
 
     /**
      * Busca os eventos para o Dashboard do Vendedor.
-     * Regra de NegGócio: Ordena os eventos pela data
+     * Regra de Negócio: Ordena os eventos pela data
      * (ex: os próximos a acontecer primeiro).
      * @author Jonathan Bufon
      */
