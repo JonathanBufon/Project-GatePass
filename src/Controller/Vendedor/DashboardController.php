@@ -33,11 +33,11 @@ class DashboardController extends AbstractController
         $usuario = $this->getUser();
         $vendedor = $usuario->getVendedor();
         if (!$vendedor) {
-            $this.addFlash('error', 'Perfil de vendedor não encontrado.');
+            $this->addFlash('error', 'Perfil de vendedor não encontrado.');
             return $this->redirectToRoute('app_home');
         }
 
-        $eventos = $this.eventoService->getEventosPorVendedor($vendedor);
+        $eventos = $this->eventoService->getEventosPorVendedor($vendedor);
         return $this->render('vendedor/dashboard/index.html.twig', [
             'eventos' => $eventos,
             'vendedor' => $vendedor,

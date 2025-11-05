@@ -183,3 +183,53 @@ O projeto está com os fluxos de "Registro" e "Compra" completos, e o "Dashboard
     * Expandir o `EventoService` (Camada 3) para incluir os métodos `criarNovoEvento()` e `atualizarEvento()`, garantindo que o `Vendedor` logado só possa editar os seus próprios eventos.
 2.  **Implementar o CRUD de Lotes:**
     * Permitir que o Vendedor adicione e edite `Lotes` (preços, estoque) associados a um `Evento` existente.
+
+
+---
+
+## Testes e Execução Local da Aplicação
+
+### Subindo o ambiente local
+
+Para iniciar o ambiente completo (Docker + servidor Symfony) em modo de desenvolvimento, execute:
+
+```bash
+docker-compose up -d --build && symfony server:start
+```
+
+Se preferir iniciar os serviços separadamente:
+
+```bash
+docker-compose up -d --build
+```
+
+Em seguida, inicie o servidor Symfony:
+
+```bash
+symfony server:start
+```
+
+---
+
+### Logins de Teste (Ambiente de Desenvolvimento)
+
+Use as credenciais abaixo para acessar o sistema em ambiente local:
+
+| Perfil    | E-mail                                          | Senha    |
+| --------- | ----------------------------------------------- | -------- |
+| Comprador | [jonathan@teste.com](mailto:jonathan@teste.com) | 12345678 |
+| Vendedor  | [jonathan@admin.com](mailto:jonathan@admin.com) | 12345678 |
+
+---
+
+### Observações
+
+* Certifique-se de que o Docker e o Symfony CLI estão instalados e configurados corretamente antes de executar os comandos.
+* Caso encontre problemas de cache, execute:
+
+  ```bash
+  symfony console cache:clear
+  ```
+
+---
+

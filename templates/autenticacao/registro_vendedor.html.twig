@@ -20,43 +20,49 @@
 
         {% include '_partials/flash_messages.html.twig' %}
 
-        {{ form_start(registrationForm, {'attr': {'novalidate': 'novalidate'}}) }}
+        {{ form_start(registrationForm, {'attr': {'novidate': 'novidate'}}) }}
 
         <h1 class="h3 mb-3 fw-normal">Seja um Vendedor</h1>
 
-        {# 5. Renderizamos os campos do 'RegistroVendedorFormType' #}
+        {# 5. Renderizamos os campos padronizados com 'placeholder' #}
 
         <div class="form-floating mb-2">
-            {{ form_widget(registrationForm.email) }}
+            {{ form_widget(registrationForm.email, {'attr': {'placeholder': 'Email de Acesso'}}) }}
             {{ form_label(registrationForm.email) }}
             {{ form_errors(registrationForm.email) }}
         </div>
 
-        <div class_("form-floating mb-2">
-        {{ form_widget(registrationForm.nomeFantasia) }}
-        {{ form_label(registrationForm.nomeFantasia) }}
-        {{ form_errors(registrationForm.nomeFantasia) }}
+        {# -- INÍCIO DA CORREÇÃO (Sintaxe) -- #}
+        <div class="form-floating mb-2">
+            {{ form_widget(registrationForm.nomeFantasia, {'attr': {'placeholder': 'Nome Fantasia da Empresa'}}) }}
+            {{ form_label(registrationForm.nomeFantasia) }}
+            {{ form_errors(registrationForm.nomeFantasia) }}
         </div>
+        {# -- FIM DA CORREÇÃO -- #}
 
         <div class="form-floating mb-2">
-            {{ form_widget(registrationForm.cnpj) }}
+            {{ form_widget(registrationForm.cnpj, {'attr': {'placeholder': 'CNPJ'}}) }}
             {{ form_label(registrationForm.cnpj) }}
             {{ form_errors(registrationForm.cnpj) }}
         </div>
 
+        {# -- INÍCIO DA CORREÇÃO (Regra Obsoleta) -- #}
+        {# Removidas classes 'first'/'second', adicionado placeholder #}
         <div class="form-floating mb-2">
-            {{ form_widget(registrationForm.plainPassword.first, {'attr': {'class': 'first'}}) }}
+            {{ form_widget(registrationForm.plainPassword.first, {'attr': {'placeholder': 'Senha'}}) }}
             {{ form_label(registrationForm.plainPassword.first) }}
             {{ form_errors(registrationForm.plainPassword.first) }}
         </div>
         <div class="form-floating mb-3">
-            {{ form_widget(registrationForm.plainPassword.second, {'attr': {'class': 'second'}}) }}
+            {{ form_widget(registrationForm.plainPassword.second, {'attr': {'placeholder': 'Confirmar Senha'}}) }}
             {{ form_label(registrationForm.plainPassword.second) }}
             {{ form_errors(registrationForm.plainPassword.second) }}
         </div>
+        {# -- FIM DA CORREÇÃO -- #}
 
-        <div class="checkbox mb-3">
-            <label>
+        {# Padronizando o checkbox (igual ao registro de cliente) #}
+        <div class="checkbox mb-3 text-start">
+            <label class="small">
                 {{ form_widget(registrationForm.agreeTerms) }}
                 {{ form_label(registrationForm.agreeTerms) }}
             </label>

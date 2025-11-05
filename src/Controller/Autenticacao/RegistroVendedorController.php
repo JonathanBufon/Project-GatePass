@@ -32,7 +32,7 @@ class RegistroVendedorController extends AbstractController
             $data = $form->getData();
 
             try {
-                $this.usuarioService->registrarVendedor(
+                $this->usuarioService->registrarVendedor(
                     $data['email'],
                     $form->get('plainPassword')->getData(),
                     $data['nomeFantasia'],

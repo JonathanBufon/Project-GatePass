@@ -1,0 +1,98 @@
+{% extends 'base.html.twig' %}
+
+{# Título padrão para todas as páginas do vendedor #}
+{% block title %}Dashboard - GatePass{% endblock %}
+
+{# Adicionamos o CSS específico do Dashboard #}
+{% block stylesheets %}
+    {{ parent() }} {# Mantém o style.css global #}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="{{ asset('assets/css/vendedor/dashboard.css') }}" rel="stylesheet">
+{% endblock %}
+
+{# O Dashboard tem um header/nav fixo, então sobrescrevemos o header padrão #}
+{% block header %}
+    <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6" href="{{ path('app_vendedor_dashboard') }}">GatePass</a>
+        <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        {# Você pode implementar a busca no futuro aqui #}
+        <input class="form-control form-control-dark w-100 rounded-0 border-0" type="text" placeholder="Buscar" aria-label="Search" disabled>
+
+        <div class="navbar-nav">
+            <div class="nav-item text-nowrap">
+                <a class="nav-link px-3" href="{{ path('app_logout') }}">Sair</a>
+            </div>
+        </div>
+    </header>
+{% endblock %}
+
+{# O corpo do dashboard é um layout de colunas (sidebar + main) #}
+{% block main_content_wrapper %}
+    <div class="container-fluid">
+        <div class="row">
+            {# Coluna da Sidebar #}
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+                <div class="position-sticky pt-3 sidebar-sticky">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link {% if app.request.attributes.get('_route') == 'app_vendedor_dashboard' %}active{% endif %}" href="{{ path('app_vendedor_dashboard') }}">
+                                <span data-feather="home" class="align-text-bottom"></span>
+                                Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if 'evento' in app.request.attributes.get('_route') %}active{% endif %}" href="{{ path('app_vendedor_evento_novo') }}">
+                                <span data-feather="calendar" class="align-text-bottom"></span>
+                                Meus Eventos
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <span data-feather="bar-chart-2" class="align-text-bottom"></span>
+                                Relatórios
+                            </a>
+                        </li>
+                    </ul>
+
+                    <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted text-uppercase">
+                        <span>Minha Conta</span>
+                    </h6>
+                    <ul class="nav flex-column mb-2">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <span data-feather="user" class="align-text-bottom"></span>
+                                Perfil
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            {# Coluna do Conteúdo Principal #}
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                {# Injetamos as flash messages aqui #}
+                {% include '_partials/flash_messages.html.twig' %}
+
+                {# Este é o "buraco" onde o 'novo.html.twig' será renderizado #}
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+{% endblock %}
+
+{# O Dashboard tem JS específico (ex: Feather icons) #}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script>
+        feather.replace(); // Ativa os ícones do Feather (necessário para o seu 'novo.html.twig')
+    </script>
+    {# JS específico do dashboard, se houver #}
+    <script src="{{ asset('assets/js/vendedor/dashboard.js') }}"></script>
+{% endblock %}
+
+{# O Dashboard não tem footer global #}
+{% block footer %}{% endblock %}
