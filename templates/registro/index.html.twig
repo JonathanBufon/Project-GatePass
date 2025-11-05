@@ -1,7 +1,9 @@
+{# /templates/registro/index.html.twig #}
 {% extends 'base.html.twig' %}
 
 {% block title %}Registrar - GatePass{% endblock %}
 
+{# Utiliza a classe de corpo específica do template Sign-in do Bootstrap #}
 {% block body_class %}body-signin text-center{% endblock %}
 
 {% block stylesheets %}
@@ -9,18 +11,21 @@
     <link href="{{ asset('assets/css/registro/style.css') }}" rel="stylesheet">
 {% endblock %}
 
+{# Remove os blocos de header e footer para uma tela de autenticação limpa #}
 {% block header %}{% endblock %}
 {% block footer %}{% endblock %}
 
 {% block main_content_wrapper %}
     <main class="form-signin w-100 m-auto">
 
+        {# Renderiza mensagens flash (ex: sucesso, erro) #}
         {% include '_partials/flash_messages.html.twig' %}
 
         {{ form_start(registrationForm, {'attr': {'novalidate': 'novalidate'}}) }}
 
         <h1 class="h3 mb-3 fw-normal">Criar sua Conta</h1>
 
+        {# Padrão Floating Labels do Bootstrap 5 #}
         <div class="form-floating mb-2">
             {{ form_widget(registrationForm.email, {'attr': {'placeholder': 'Email'}}) }}
             {{ form_label(registrationForm.email) }}
@@ -51,20 +56,28 @@
             {{ form_errors(registrationForm.plainPassword.second) }}
         </div>
 
-        {# Esta sua alteração está excelente, alinhando o texto à esquerda (text-start) #}
-        <div class="checkbox mb-3 text-start">
-            <label class="small">
-                {{ form_widget(registrationForm.agreeTerms) }}
-                Li e aceito os termos de uso
-            </label>
+        {#
+        MELHORIA 1:
+        Utilizando o padrão "form-check" do Bootstrap 5 para checkboxes.
+        Isso garante que o form_errors() renderize o .invalid-feedback corretamente.
+        #}
+        <div class="form-check text-start mb-3">
+            {{ form_widget(registrationForm.agreeTerms) }}
+            {{ form_label(registrationForm.agreeTerms, 'Li e aceito os termos de uso', {'label_attr': {'class': 'small'}}) }}
             {{ form_errors(registrationForm.agreeTerms) }}
         </div>
 
         <button class="w-100 btn btn-lg btn-primary" type="submit">Registrar</button>
 
-        <p class="mt-3">
-            Já tem uma conta? <a href="{{ path('app_login') }}">Fazer Login</a>
-        </p>
+
+        <div class="mt-4 small">
+            <p class="mb-2">
+                Já tem uma conta? <a href="{{ path('app_login') }}">Fazer Login</a>
+            </p>
+            <p class="mb-0">
+                Trabalhe conosco e <a href="{{ path('app_registro_vendedor') }}">seja um vendedor</a>
+            </p>
+        </div>
 
         {{ form_end(registrationForm) }}
     </main>
