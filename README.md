@@ -213,6 +213,9 @@ symfony server:start
 
 ### Logins de Teste (Ambiente de Desenvolvimento)
 
+Atualizado em (04/11/2025) por Jonathan Bufon.
+
+
 Use as credenciais abaixo para acessar o sistema em ambiente local:
 
 | Perfil    | E-mail                                          | Senha    |
