@@ -194,13 +194,13 @@ O projeto está com os fluxos de "Registro" e "Compra" completos, e o "Dashboard
 Para iniciar o ambiente completo (Docker + servidor Symfony) em modo de desenvolvimento, execute:
 
 ```bash
-docker-compose up -d --build && symfony server:start
+docker compose up -d --build && symfony server:start
 ```
 
 Se preferir iniciar os serviços separadamente:
 
 ```bash
-docker-compose up -d --build
+docker compose up -d --build
 ```
 
 Em seguida, inicie o servidor Symfony:
