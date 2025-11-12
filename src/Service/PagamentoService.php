@@ -3,6 +3,9 @@
 namespace App\Service;
 
 use App\Entity\Pedido;
+use App\Dto\CheckoutDto;
+use App\Message\PurchaseConfirmedMessage;
+use App\Port\Payment\PaymentGatewayInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -15,7 +18,9 @@ class PagamentoService
 {
     public function __construct(
         private readonly EntityManagerInterface $em,
-        private readonly LoggerInterface $logger // Boa prática: logar transações
+        private readonly LoggerInterface $logger,
+        private readonly PaymentGatewayInterface $gateway,
+        private readonly \Symfony\Component\Messenger\MessageBusInterface $bus
     ) {
     }
 
@@ -25,7 +30,7 @@ class PagamentoService
      * @param array $dadosFormulario Dados do PagamentoFormType
      * @return bool True se o pagamento foi aprovado, False caso contrário.
      */
-    public function processarPagamento(Pedido $pedido, array $dadosFormulario): bool
+    public function processarPagamento(Pedido $pedido, array|CheckoutDto $dadosFormulario): bool
     {
         // 1. Regra de Negócio: Não reprocessar um pedido
         if ($pedido->getStatus() !== 'PENDENTE') {
@@ -33,18 +38,13 @@ class PagamentoService
             return false;
         }
 
-        //  SIMULAÇÃO DE GATEWAY
-        // Aqui ocorreria a chamada real para um SDK (Stripe, PagSeguro)
-        // ex: $gateway->charge($pedido->getValorTotal(), $dadosFormulario['ccNumber']);
         $this->logger->info('Iniciando processamento de pagamento...', [
             'pedidoId' => $pedido->getId(),
             'valor' => $pedido->getValorTotal(),
-            'metodo' => $dadosFormulario['paymentMethod']
+            'metodo' => is_array($dadosFormulario) ? ($dadosFormulario['formaPagamento'] ?? 'n/a') : ($dadosFormulario->formaPagamento ?? 'n/a')
         ]);
-
-        // Simples simulação: assume que o pagamento foi APROVADO
-        $sucessoPagamento = true;
-        // --- FIM DA SIMULAÇÃO ---
+        $dto = is_array($dadosFormulario) ? (function(array $a){ $d=new CheckoutDto(); $d->nomeCompleto=$a['nomeCompleto']??''; $d->email=$a['email']??''; $d->cpf=$a['cpf']??''; $d->formaPagamento=$a['formaPagamento']??''; return $d;})($dadosFormulario) : $dadosFormulario;
+        $sucessoPagamento = $this->gateway->charge($pedido, $dto);
 
         if ($sucessoPagamento) {
             // 3. Regra de Negócio: Atualiza status (Camada 1 - Entidade)
@@ -58,7 +58,8 @@ class PagamentoService
                 }
             }
 
-            // (Aqui também dispararíamos um Evento/Email de Confirmação)
+            // Dispara mensagem assíncrona de confirmação
+            $this->bus->dispatch(new PurchaseConfirmedMessage($pedido->getId()));
 
         } else {
             // 4. Pagamento falhou

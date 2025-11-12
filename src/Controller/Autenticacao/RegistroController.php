@@ -39,10 +39,10 @@ class RegistroController extends AbstractController
 
             try {
                 $this->usuarioService->registrarCliente(
-                    $data['email'],
+                    $data->email,
                     $form->get('plainPassword')->getData(),
-                    $data['nomeCompleto'],
-                    $data['cpf']
+                    $data->nomeCompleto,
+                    $data->cpf
                 );
 
                 $this->addFlash('success', 'Registro realizado com sucesso! Faça seu login.');

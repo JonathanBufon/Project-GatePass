@@ -7,6 +7,8 @@ use App\Entity\Ingresso;
 use App\Entity\Lote;
 use App\Entity\Pedido;
 use App\Entity\Usuario;
+use App\Domain\Policy\EstoquePolicy;
+use App\Domain\Policy\JanelaVendaPolicy;
 use App\Repository\PedidoRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormInterface;
@@ -27,7 +29,9 @@ class PedidoService
 
     public function __construct(
         private readonly EntityManagerInterface $em,
-        private readonly PedidoRepository $pedidoRepository
+        private readonly PedidoRepository $pedidoRepository,
+        private readonly EstoquePolicy $estoquePolicy,
+        private readonly JanelaVendaPolicy $janelaPolicy
     ) {
     }
 
@@ -132,20 +136,13 @@ class PedidoService
             throw new \LogicException('A quantidade deve ser pelo menos 1.');
         }
 
-        // --- INÍCIO DA REGRA DE NEGÓCIO: CONTROLE DE ESTOQUE ---
-        // Conforme o Plano de Ação, validamos o estoque ANTES de reservar os ingressos.
-        // Isto assume que Lote::getQuantidadeVendida() foi implementado e
-        // já contabiliza ingressos 'RESERVADO' e 'CONFIRMADO'.
-
-        $estoqueDisponivel = $lote->getQuantidadeTotal() - $lote->getQuantidadeVendida();
-
-        if ($quantidade > $estoqueDisponivel) {
-            // Utilizamos sprintf para uma mensagem de erro clara.
-            throw new \LogicException(sprintf(
-                'Estoque insuficiente para o lote. Solicitado: %d, Disponível: %d.',
-                $quantidade,
-                $estoqueDisponivel
-            ));
+        // Políticas de domínio: janela de venda e estoque disponível
+        if (!$this->janelaPolicy->dentroDaJanela($lote)) {
+            throw new \LogicException('Lote fora da janela de venda.');
+        }
+        if (!$this->estoquePolicy->hasDisponibilidade($lote, $quantidade)) {
+            $disp = $lote->getQuantidadeTotal() - $lote->getQuantidadeVendida();
+            throw new \LogicException(sprintf('Estoque insuficiente para o lote. Solicitado: %d, Disponível: %d.', $quantidade, $disp));
         }
 
         for ($i = 0; $i < $quantidade; $i++) {

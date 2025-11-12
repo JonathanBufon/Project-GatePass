@@ -21,7 +21,7 @@ class CarrinhoController extends AbstractController
      * Busca os itens do CarrinhoService (Sessão), calcula o total
      * e renderiza o formulário de checkout (DTO).
      */
-    #[Route('/checkout', name: 'app_checkout_index', methods: ['GET'])]
+    #[Route('/checkout', name: 'app_checkout_session', methods: ['GET'])]
     public function index(CarrinhoService $carrinhoService): Response
     {
         $carrinhoDetalhado = $carrinhoService->getItensDetalhado();

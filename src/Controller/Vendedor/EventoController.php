@@ -62,11 +62,7 @@ class EventoController extends AbstractController
     public function editar(Request $request, Evento $evento, EventoService $eventoService): Response
     {
         // Regra de Negócio (Segurança): Garantir que o vendedor logado é o dono do evento.
-        /** @var Usuario $usuario */
-        $usuario = $this->getUser();
-        if (!$usuario->getVendedor() || $evento->getVendedor() !== $usuario->getVendedor()) {
-            throw new AccessDeniedHttpException('Você não tem permissão para editar este evento.');
-        }
+        $this->denyAccessUnlessGranted('EVENTO_EDIT', $evento);
 
         $form = $this->createForm(EventoFormType::class, $evento);
         $form->handleRequest($request);
@@ -94,11 +90,7 @@ class EventoController extends AbstractController
     public function publicar(Request $request, Evento $evento, EventoService $eventoService): Response
     {
         // Regra de Negócio (Segurança): Garantir que o vendedor logado é o dono do evento.
-        /** @var Usuario $usuario */
-        $usuario = $this->getUser();
-        if (!$usuario->getVendedor() || $evento->getVendedor() !== $usuario->getVendedor()) {
-            throw new AccessDeniedHttpException('Você não tem permissão para publicar este evento.');
-        }
+        $this->denyAccessUnlessGranted('EVENTO_PUBLICAR', $evento);
 
         // Segurança (CSRF): Validar o token enviado pelo formulário no dashboard.
         $token = $request->request->get('_token');

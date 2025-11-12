@@ -69,14 +69,7 @@ class CheckoutController extends AbstractController
     #[Route('/confirmacao/{id}', name: 'app_compra_confirmada', methods: ['GET'])]
     public function confirmacao(Pedido $pedido): Response
     {
-        /** @var Usuario $usuario */
-        $usuario = $this->getUser();
-
-        // O usuário logado é o dono deste pedido?
-        if ($pedido->getCliente() !== $usuario->getCliente()) {
-            $this->addFlash('error', 'Acesso negado.');
-            return $this->redirectToRoute('app_home');
-        }
+        $this->denyAccessUnlessGranted('PEDIDO_VIEW', $pedido);
 
         // O pedido foi realmente APROVADO?
         // (Previne acesso direto à URL de um pedido PENDENTE ou RECUSADO)

@@ -9,6 +9,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: LoteRepository::class)]
+#[ORM\Table(name: 'lote', indexes: [new ORM\Index(columns: ['evento_id'])])]
 class Lote
 {
     #[ORM\Id]

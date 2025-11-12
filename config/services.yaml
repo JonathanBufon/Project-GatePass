@@ -20,5 +20,9 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
+    # Interface bindings (Ports -> Adapters)
+    App\Port\Payment\PaymentGatewayInterface: '@App\Adapter\Payment\SandboxPaymentGateway'
+    App\Port\Email\TransactionalEmailInterface: '@App\Adapter\Email\MailerTransactionalEmail'
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

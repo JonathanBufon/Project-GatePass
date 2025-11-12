@@ -135,12 +135,7 @@ class PedidoController extends AbstractController
     #[Route('/detalhe/{id}', name: 'app_pedido_detalhe', methods: ['GET'])]
     public function detalhe(Pedido $pedido): Response
     {
-        /** @var Usuario $usuario */
-        $usuario = $this->getUser();
-
-        if (!$usuario->getCliente() || $pedido->getCliente() !== $usuario->getCliente()) {
-            throw new AccessDeniedHttpException('Você não tem permissão para visualizar este pedido.');
-        }
+        $this->denyAccessUnlessGranted('PEDIDO_VIEW', $pedido);
 
         return $this->render('pedido/detalhe.html.twig', [
             'pedido' => $pedido,

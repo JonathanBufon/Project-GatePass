@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Dto\CheckoutDto;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
@@ -66,7 +67,7 @@ class CheckoutFormType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => null,
+            'data_class' => CheckoutDto::class,
             'csrf_protection' => true,
             'csrf_field_name' => '_token',
             'csrf_token_id' => 'checkout_token',

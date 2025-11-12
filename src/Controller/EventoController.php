@@ -27,9 +27,12 @@ class EventoController extends AbstractController
     {
         $eventos = $this->eventoService->getEventosPublicados();
 
-        return $this->render('evento/index.html.twig', [
+        $response = $this->render('evento/index.html.twig', [
             'eventos' => $eventos,
         ]);
+        $response->setPublic();
+        $response->setMaxAge(120);
+        return $response;
     }
 
     /**
@@ -47,9 +50,12 @@ class EventoController extends AbstractController
         if (!$evento) {
             throw $this->createNotFoundException('O evento solicitado não foi encontrado ou não está disponível.');
         }
-        return $this->render('evento/detalhe.html.twig', [
+        $response = $this->render('evento/detalhe.html.twig', [
             'evento' => $evento,
         ]);
+        $response->setPublic();
+        $response->setMaxAge(120);
+        return $response;
     }
 
 }

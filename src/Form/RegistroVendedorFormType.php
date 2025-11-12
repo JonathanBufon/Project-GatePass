@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Dto\RegistroVendedorDto;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
@@ -70,7 +71,7 @@ class RegistroVendedorFormType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => null, // SRP: É um DTO
+            'data_class' => RegistroVendedorDto::class, // SRP: É um DTO
         ]);
     }
 }
