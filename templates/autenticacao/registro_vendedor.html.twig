@@ -1,80 +1,56 @@
-{% extends 'base.html.twig' %}
+{# Agora estende o novo layout de autenticação #}
+{% extends 'autenticacao/base_auth.html.twig' %}
 
 {% block title %}Seja um Vendedor - GatePass{% endblock %}
 
-{# 1. Reutilizamos a classe de controle do 'sign-in' #}
-{% block body_class %}body-signin text-center{% endblock %}
+{# Todo o CSS, JS e HTML repetido foi removido #}
 
-{# 2. Reutilizamos o MESMO CSS (Princípio DRY) #}
-{% block stylesheets %}
-    <link href="{{ asset('assets/css/registro/style.css') }}" rel="stylesheet">
-{% endblock %}
+{# Preenchemos o bloco 'auth_form' definido no layout pai #}
+{% block auth_form %}
+    {{ form_start(registrationForm, {'attr': {'novidate': 'novidate'}}) }}
 
-{# 3. Removemos header e footer #}
-{% block header %}{% endblock %}
-{% block footer %}{% endblock %}
+    <h1 class="h3 mb-3 fw-normal text-center">Seja um Vendedor</h1>
 
-{# 4. Sobrescrevemos o wrapper #}
-{% block main_content_wrapper %}
-    <main class="form-signin w-100 m-auto">
+    <div class="form-floating mb-2">
+        {{ form_widget(registrationForm.email, {'attr': {'placeholder': 'Email de Acesso'}}) }}
+        {{ form_label(registrationForm.email) }}
+        {{ form_errors(registrationForm.email) }}
+    </div>
 
-        {% include '_partials/flash_messages.html.twig' %}
+    <div class="form-floating mb-2">
+        {{ form_widget(registrationForm.nomeFantasia, {'attr': {'placeholder': 'Nome Fantasia da Empresa'}}) }}
+        {{ form_label(registrationForm.nomeFantasia) }}
+        {{ form_errors(registrationForm.nomeFantasia) }}
+    </div>
 
-        {{ form_start(registrationForm, {'attr': {'novidate': 'novidate'}}) }}
+    <div class="form-floating mb-2">
+        {{ form_widget(registrationForm.cnpj, {'attr': {'placeholder': 'CNPJ'}}) }}
+        {{ form_label(registrationForm.cnpj) }}
+        {{ form_errors(registrationForm.cnpj) }}
+    </div>
 
-        <h1 class="h3 mb-3 fw-normal">Seja um Vendedor</h1>
+    <div class="form-floating mb-2">
+        {{ form_widget(registrationForm.plainPassword.first, {'attr': {'placeholder': 'Senha'}}) }}
+        {{ form_label(registrationForm.plainPassword.first) }}
+        {{ form_errors(registrationForm.plainPassword.first) }}
+    </div>
+    <div class="form-floating mb-3">
+        {{ form_widget(registrationForm.plainPassword.second, {'attr': {'placeholder': 'Confirmar Senha'}}) }}
+        {{ form_label(registrationForm.plainPassword.second) }}
+        {{ form_errors(registrationForm.plainPassword.second) }}
+    </div>
 
-        {# 5. Renderizamos os campos padronizados com 'placeholder' #}
+    <div class="form-check text-start mb-3">
+        {{ form_widget(registrationForm.agreeTerms) }}
+        {{ form_label(registrationForm.agreeTerms, 'Li e aceito os termos de uso', {'label_attr': {'class': 'small'}}) }}
+        {{ form_errors(registrationForm.agreeTerms) }}
+    </div>
 
-        <div class="form-floating mb-2">
-            {{ form_widget(registrationForm.email, {'attr': {'placeholder': 'Email de Acesso'}}) }}
-            {{ form_label(registrationForm.email) }}
-            {{ form_errors(registrationForm.email) }}
-        </div>
+    <button class="w-100 btn btn-lg btn-primary" type="submit">Registrar Vendedor</button>
 
-        {# -- INÍCIO DA CORREÇÃO (Sintaxe) -- #}
-        <div class="form-floating mb-2">
-            {{ form_widget(registrationForm.nomeFantasia, {'attr': {'placeholder': 'Nome Fantasia da Empresa'}}) }}
-            {{ form_label(registrationForm.nomeFantasia) }}
-            {{ form_errors(registrationForm.nomeFantasia) }}
-        </div>
-        {# -- FIM DA CORREÇÃO -- #}
+    <p class="mt-3 text-center">
+        Já tem uma conta? <a href="{{ path('app_login') }}">Fazer Login</a>
+    </p>
 
-        <div class="form-floating mb-2">
-            {{ form_widget(registrationForm.cnpj, {'attr': {'placeholder': 'CNPJ'}}) }}
-            {{ form_label(registrationForm.cnpj) }}
-            {{ form_errors(registrationForm.cnpj) }}
-        </div>
-
-        {# -- INÍCIO DA CORREÇÃO (Regra Obsoleta) -- #}
-        {# Removidas classes 'first'/'second', adicionado placeholder #}
-        <div class="form-floating mb-2">
-            {{ form_widget(registrationForm.plainPassword.first, {'attr': {'placeholder': 'Senha'}}) }}
-            {{ form_label(registrationForm.plainPassword.first) }}
-            {{ form_errors(registrationForm.plainPassword.first) }}
-        </div>
-        <div class="form-floating mb-3">
-            {{ form_widget(registrationForm.plainPassword.second, {'attr': {'placeholder': 'Confirmar Senha'}}) }}
-            {{ form_label(registrationForm.plainPassword.second) }}
-            {{ form_errors(registrationForm.plainPassword.second) }}
-        </div>
-        {# -- FIM DA CORREÇÃO -- #}
-
-        {# Padronizando o checkbox (igual ao registro de cliente) #}
-        <div class="checkbox mb-3 text-start">
-            <label class="small">
-                {{ form_widget(registrationForm.agreeTerms) }}
-                {{ form_label(registrationForm.agreeTerms) }}
-            </label>
-            {{ form_errors(registrationForm.agreeTerms) }}
-        </div>
-
-        <button class="w-100 btn btn-lg btn-primary" type="submit">Registrar Vendedor</button>
-
-        <p class="mt-3">
-            Já tem uma conta? <a href="{{ path('app_login') }}">Fazer Login</a>
-        </p>
-
-        {{ form_end(registrationForm) }}
-    </main>
+    {{ form_end(registrationForm) }}
 {% endblock %}

@@ -35,7 +35,7 @@ class PedidoService
      * Adiciona um ou mais ingressos (Lotes) ao pedido pendente do cliente.
      *
      * @throws AccessDeniedException Se o usuário não tiver cliente vinculado.
-     * @throws \LogicException Se o lote não estiver disponível.
+     * @throws \LogicException Se o lote não estiver disponível ou sem estoque.
      */
     public function adicionarLoteAoPedido(Lote $lote, Usuario $usuario, int $quantidade): Pedido
     {
@@ -46,7 +46,9 @@ class PedidoService
 
         $pedido = $this->pedidoRepository->findPendentePorCliente($cliente) ?? $this->criarPedido($cliente);
 
+        // A validação de estoque ocorrerá dentro deste método
         $this->adicionarIngressos($pedido, $lote, $quantidade);
+
         $pedido->recalcularTotal();
 
         $this->em->flush();
@@ -122,12 +124,28 @@ class PedidoService
     }
 
     /**
-     * Adiciona ingressos ao pedido.
+     * Adiciona ingressos ao pedido, validando o estoque disponível.
      */
     private function adicionarIngressos(Pedido $pedido, Lote $lote, int $quantidade): void
     {
         if ($quantidade < 1) {
             throw new \LogicException('A quantidade deve ser pelo menos 1.');
+        }
+
+        // --- INÍCIO DA REGRA DE NEGÓCIO: CONTROLE DE ESTOQUE ---
+        // Conforme o Plano de Ação, validamos o estoque ANTES de reservar os ingressos.
+        // Isto assume que Lote::getQuantidadeVendida() foi implementado e
+        // já contabiliza ingressos 'RESERVADO' e 'CONFIRMADO'.
+
+        $estoqueDisponivel = $lote->getQuantidadeTotal() - $lote->getQuantidadeVendida();
+
+        if ($quantidade > $estoqueDisponivel) {
+            // Utilizamos sprintf para uma mensagem de erro clara.
+            throw new \LogicException(sprintf(
+                'Estoque insuficiente para o lote. Solicitado: %d, Disponível: %d.',
+                $quantidade,
+                $estoqueDisponivel
+            ));
         }
 
         for ($i = 0; $i < $quantidade; $i++) {

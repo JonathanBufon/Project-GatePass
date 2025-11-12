@@ -10,8 +10,12 @@
 {# O template Checkout não tem o footer padrão #}
 {% block footer %}{% endblock %}
 
+{#
+* CORREÇÃO 3: Removido 'style="padding-top: 80px;"'.
+* O padding global já é herdado do 'base.html.twig'.
+#}
 {% block main_content_wrapper %}
-    <div class="container" style="padding-top: 80px;">
+    <div class="container">
         <main>
             <div class="py-5 text-center">
                 <h2>Checkout</h2>
@@ -29,40 +33,20 @@
                 <div class="col-md-5 col-lg-4 order-md-last">
                     <h4 class="d-flex justify-content-between align-items-center mb-3">
                         <span class="text-primary">Seu Pedido (Carrinho)</span>
-                        <span class="badge bg-primary rounded-pill">{{ pedido.ingressos|length }}</span>
+                        {#
+                        * CORREÇÃO 1: Consumindo o 'Contrato de Dados' correto.
+                        * Usamos 'itens|length' (vindo do Controller) em vez de 'pedido.ingressos|length'.
+                        #}
+                        <span class="badge bg-primary rounded-pill">{{ itens|length }}</span>
                     </h4>
 
                     <ul class="list-group mb-3">
                         {#
-                        No modelo "Carrinho Persistente", iteramos sobre
-                        os ingressos agrupados (ou ingressos individuais) do Pedido
+                        * CORREÇÃO 1: Consumindo o 'Contrato de Dados' correto.
+                        * Removemos a lógica de agrupamento do Twig (ingressosAgrupados).
+                        * O CarrinhoService já nos entrega a variável 'itens' pronta.
                         #}
-                        {# Assumindo que o Pedido->recalcularTotal() atualizou o total #}
-
-                        {# Vamos agrupar os ingressos por lote para exibição #}
-                        {% set ingressosAgrupados = {} %}
-                        {% for ingresso in pedido.ingressos %}
-                            {% set loteId = ingresso.lote.id %}
-                            {% if loteId not in ingressosAgrupados|keys %}
-                                {% set ingressosAgrupados = ingressosAgrupados|merge({
-                                    (loteId): {
-                                        'lote': ingresso.lote,
-                                        'quantidade': 0,
-                                        'subtotal': 0
-                                    }
-                                }) %}
-                            {% endif %}
-
-                            {% set item = ingressosAgrupados[loteId] %}
-                            {% set ingressosAgrupados = ingressosAgrupados|merge({
-                                (loteId): item|merge({
-                                    'quantidade': item.quantidade + 1,
-                                    'subtotal': item.subtotal + ingresso.valorPago
-                                })
-                            }) %}
-                        {% endfor %}
-
-                        {% for item in ingressosAgrupados %}
+                        {% for item in itens %}
                             <li class="list-group-item d-flex justify-content-between lh-sm">
                                 <div>
                                     <h6 class="my-0">{{ item.lote.evento.nome }}</h6>
@@ -70,11 +54,18 @@
                                 </div>
                                 <span class="text-muted">R$ {{ item.subtotal|number_format(2, ',', '.') }}</span>
                             </li>
+                        {% else %}
+                            <li class="list-group-item d-flex justify-content-between lh-sm">
+                                <div>
+                                    <h6 class="my-0 text-muted">Carrinho vazio</h6>
+                                </div>
+                            </li>
                         {% endfor %}
 
                         <li class="list-group-item d-flex justify-content-between">
                             <span>Total (BRL)</span>
-                            <strong>R$ {{ pedido.total|number_format(2, ',', '.') }}</strong>
+                            {# CORREÇÃO 1: Usamos 'total' em vez de 'pedido.total' #}
+                            <strong>R$ {{ total|number_format(2, ',', '.') }}</strong>
                         </li>
                     </ul>
                 </div>
@@ -115,6 +106,7 @@
                 </div>
             </div>
 
+            {# CORREÇÃO 2: Fechando o formulário #}
             {{ form_end(checkoutForm) }}
         </main>
     </div>

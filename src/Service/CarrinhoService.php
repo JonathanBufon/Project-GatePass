@@ -30,23 +30,48 @@ class CarrinhoService
      *
      * @param int $loteId O ID do Lote a ser adicionado.
      * @param int $quantidade A quantidade de ingressos.
+     *
+     * @throws \LogicException Se o lote não for encontrado ou não tiver estoque.
      */
     public function add(int $loteId, int $quantidade): void
     {
-        // 1. Obtém o carrinho atual da sessão, ou um array vazio.
-        $carrinho = $this->session->get(self::CARRINHO_SESSION_KEY, []);
+        // --- INÍCIO DA CORREÇÃO ---
 
-        // 2. Lógica de adição/atualização
-        // (Se já existir, soma a quantidade; senão, define a nova)
-        if (isset($carrinho[$loteId])) {
-            $carrinho[$loteId] += $quantidade;
-        } else {
-            $carrinho[$loteId] = $quantidade;
+        // 1. Validar a Quantidade Mínima
+        if ($quantidade < 1) {
+            throw new \LogicException('A quantidade deve ser pelo menos 1.');
         }
 
-        // (Opcional: Validação de quantidade máxima, etc.)
+        // 2. Validar a Existência do Lote (Regra de Negócio)
+        $lote = $this->loteRepository->find($loteId);
+        if (!$lote) {
+            throw new \LogicException('Lote de ingresso não encontrado.');
+        }
 
-        // 3. Salva o carrinho de volta na sessão.
+        // 3. Validar o Estoque (Regra de Negócio)
+        // (Assume que Lote::getQuantidadeVendida() está implementado)
+        $estoqueDisponivel = $lote->getQuantidadeTotal() - $lote->getQuantidadeVendida();
+
+        // 4. Obtém o carrinho atual da sessão para verificar o que já está lá
+        $carrinho = $this->session->get(self::CARRINHO_SESSION_KEY, []);
+        $quantidadeJaNoCarrinho = $carrinho[$loteId] ?? 0;
+        $quantidadeDesejada = $quantidadeJaNoCarrinho + $quantidade;
+
+        if ($quantidadeDesejada > $estoqueDisponivel) {
+            throw new \LogicException(sprintf(
+                'Estoque insuficiente para o lote "%s". Disponível: %d, Solicitado: %d',
+                $lote->getNome(),
+                $estoqueDisponivel,
+                $quantidadeDesejada
+            ));
+        }
+
+        // --- FIM DA CORREÇÃO ---
+
+        // 5. Lógica de adição/atualização
+        $carrinho[$loteId] = $quantidadeDesejada;
+
+        // 6. Salva o carrinho de volta na sessão.
         $this->session->set(self::CARRINHO_SESSION_KEY, $carrinho);
     }
 
@@ -85,6 +110,12 @@ class CarrinhoService
         // 3. Monta a estrutura de retorno
         foreach ($lotes as $lote) {
             $loteId = $lote->getId();
+
+            // Segurança: Se um ID inválido estiver na sessão, mas não no BD, pule.
+            if (!isset($carrinho[$loteId])) {
+                continue;
+            }
+
             $quantidade = $carrinho[$loteId];
             $precoUnitario = (float) $lote->getPreco();
             $subtotal = $precoUnitario * $quantidade;

@@ -1,44 +1,63 @@
 /*
- * CSS específico para o layout 'Sign-In' do Bootstrap,
- * usado pela tela de Registro (e Login) do GatePass.
+ * Arquitetura de Autenticação (GatePass)
+ * Layout "Split-Screen" (ref. Login_v1) implementado
+ * com Bootstrap 5.2 (sem CSS externo).
  */
 
-/* Garante que o body ocupe 100% da altura para centralização vertical */
-html,
-body.body-signin {
+/* Garante que o layout ocupe 100% da altura */
+html, body {
     height: 100%;
 }
 
-/* Classe de controle para o body da página de sign-in */
-.body-signin {
+/* 1. Fundo Gradiente (aplicado ao <body> pelo base_auth.html.twig) */
+.bg-auth-gradient {
+    background: #9053c7;
+    background: -webkit-linear-gradient(-135deg, #c850c0, #4158d0);
+    background: -o-linear-gradient(-135deg, #c850c0, #4158d0);
+    background: -moz-linear-gradient(-135deg, #c850c0, #4158d0);
+    background: linear-gradient(-135deg, #c850c0, #4158d0);
+
+    /* Garante que o gradiente cubra a tela inteira */
+    min-height: 100vh;
+}
+
+/* 2. Card Branco Central (o '.wrap-login100' da referência) */
+.auth-card {
+    width: 100%;
+    max-width: 960px; /* Largura da referência */
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden; /* Para o border-radius funcionar nos filhos */
+
+    /* Padding responsivo (Desktop) */
+    padding: 5rem 7rem 2rem 5rem;
+
+    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+}
+
+/* 3. Coluna da Imagem (para o 'tilt') */
+.auth-pic {
     display: flex;
     align-items: center;
-    /* justify-content: center; (Opcional, 'm-auto' no <main> já faz isso) */
-    padding-top: 40px;
-    padding-bottom: 40px;
-    background-color: #f5f5f5;
+    justify-content: center;
+    transform-style: preserve-3d;
+    perspective: 1000px;
 }
 
-/*
- * Define o container do formulário como a "caixa branca" central.
- * As classes 'w-100' e 'm-auto' no Twig controlam a largura e centralização.
- */
-.form-signin {
-    max-width: 400px;
-    background: white;
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+/* 4. Ajustes Responsivos (Tablet) */
+@media (max-width: 992px) {
+    .auth-card {
+        padding: 4rem 3rem 2rem 3rem;
+    }
 }
 
-/* Garante que o label flutuante tenha prioridade de clique (z-index) */
-.form-signin .form-floating:focus-within {
-    z-index: 2;
+/* 5. Ajustes Responsivos (Mobile) */
+@media (max-width: 768px) {
+    .auth-card {
+        padding: 3rem 1.5rem 2rem 1.5rem;
+    }
+    /* Ocultamos a imagem no mobile (como na referência) */
+    .auth-pic {
+        display: none !important;
+    }
 }
-
-/*
- * REGRAS OBSOLETAS REMOVIDAS:
- * As regras para '.first' e '.second' nos campos de senha
- * foram removidas, pois corrigimos o Twig para não usar mais
- * essas classes, simplificando o layout.
- */

@@ -11,8 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let newForm = prototype;
 
-        // Substitui o placeholder (ex: __name__) pelo índice atual
-        newForm = newForm.replace(/__name__/g, index);
+        newForm = newForm.replace(/__lote_proto__/g, index);
 
         collectionHolder.dataset.index = parseInt(index) + 1;
 
@@ -39,6 +38,5 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Event listener para Remover (usando delegação de evento)
-    // Usamos um seletor mais genérico 'body' para o caso do wrapper não existir no load
     document.querySelector('body').addEventListener('click', removeFormFromCollection);
 });

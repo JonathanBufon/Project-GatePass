@@ -3,9 +3,9 @@
  * para a área do Vendedor (GatePass).
  */
 
-body {
-    font-size: .875rem;
-}
+/*body {*/
+/*    font-size: .875rem;*/
+/*}*/
 
 /* Ícones (Feather) */
 .feather {
@@ -23,17 +23,23 @@ body {
     bottom: 0;
     left: 0;
     z-index: 100; /* Atrás da navbar */
-    padding: 48px 0 0; /* Altura da Navbar */
+    /* CORREÇÃO: Alinhado com a altura real da navbar (60px) */
+    padding: 60px 0 0;
     box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
 }
 
 .sidebar-sticky {
     position: relative;
     top: 0;
-    height: calc(100vh - 48px);
+    /* CORREÇÃO: Alinhado com a altura real da navbar (60px) */
+    height: calc(100vh - 60px);
     padding-top: .5rem;
     overflow-x: hidden;
-    overflow-y: auto; /* Permite scroll se a sidebar for longa */
+}
+
+.main-content {
+    padding-top: 60px;
+    font-size: .875rem;
 }
 
 /*

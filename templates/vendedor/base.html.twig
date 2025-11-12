@@ -1,98 +1,73 @@
+{# templates/vendedor/base.html.twig #}
 {% extends 'base.html.twig' %}
 
-{# Título padrão para todas as páginas do vendedor #}
-{% block title %}Dashboard - GatePass{% endblock %}
+{% block title %}Dashboard Vendedor - GatePass{% endblock %}
 
-{# Adicionamos o CSS específico do Dashboard #}
 {% block stylesheets %}
-    {{ parent() }} {# Mantém o style.css global #}
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    {{ parent() }}
     <link href="{{ asset('assets/css/vendedor/dashboard.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
 {% endblock %}
 
-{# O Dashboard tem um header/nav fixo, então sobrescrevemos o header padrão #}
 {% block header %}
-    <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
-        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6" href="{{ path('app_vendedor_dashboard') }}">GatePass</a>
-        <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        {# Você pode implementar a busca no futuro aqui #}
-        <input class="form-control form-control-dark w-100 rounded-0 border-0" type="text" placeholder="Buscar" aria-label="Search" disabled>
-
-        <div class="navbar-nav">
-            <div class="nav-item text-nowrap">
-                <a class="nav-link px-3" href="{{ path('app_logout') }}">Sair</a>
-            </div>
-        </div>
-    </header>
+    {# O header (navbar) é herdado do 'base.html.twig' #}
+    {{ parent() }}
 {% endblock %}
 
-{# O corpo do dashboard é um layout de colunas (sidebar + main) #}
+{% block footer %}{% endblock %} {# Remove o footer público #}
+
 {% block main_content_wrapper %}
     <div class="container-fluid">
         <div class="row">
-            {# Coluna da Sidebar #}
+
+            {# --- Bloco 1: A Sidebar Fixa --- #}
             <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
                 <div class="position-sticky pt-3 sidebar-sticky">
+                    <h6 class="sidebar-heading d-flex justify-content-between align-items.center px-3 mt-4 mb-1 text-muted text-uppercase">
+                        <span>Gerenciamento</span>
+                    </h6>
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a class="nav-link {% if app.request.attributes.get('_route') == 'app_vendedor_dashboard' %}active{% endif %}" href="{{ path('app_vendedor_dashboard') }}">
-                                <span data-feather="home" class="align-text-bottom"></span>
+                            {# Usamos app.request.attributes.get('_route') para o "active" #}
+                            <a class="nav-link {% if app.request.attributes.get('_route') == 'app_vendedor_dashboard' %}active{% endif %}"
+                               aria-current="page"
+                               href="{{ path('app_vendedor_dashboard') }}">
+                                <i class="bi bi-speedometer2 me-2"></i>
                                 Dashboard
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {% if 'evento' in app.request.attributes.get('_route') %}active{% endif %}" href="{{ path('app_vendedor_evento_novo') }}">
-                                <span data-feather="calendar" class="align-text-bottom"></span>
-                                Meus Eventos
-                            </a>
-                        </li>
-                        <li class="nav-item">
+                            {# Link de exemplo #}
                             <a class="nav-link" href="#">
-                                <span data-feather="bar-chart-2" class="align-text-bottom"></span>
-                                Relatórios
-                            </a>
-                        </li>
-                    </ul>
-
-                    <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted text-uppercase">
-                        <span>Minha Conta</span>
-                    </h6>
-                    <ul class="nav flex-column mb-2">
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <span data-feather="user" class="align-text-bottom"></span>
-                                Perfil
+                                <i class="bi bi-ticket-perforated me-2"></i>
+                                Vendas
                             </a>
                         </li>
                     </ul>
                 </div>
             </nav>
 
-            {# Coluna do Conteúdo Principal #}
+            {# --- Bloco 2: O Conteúdo Principal --- #}
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                {# Injetamos as flash messages aqui #}
-                {% include '_partials/flash_messages.html.twig' %}
+                {# Usamos a classe 'main-content' que corrigimos no CSS anterior #}
+                <div class="main-content">
 
-                {# Este é o "buraco" onde o 'novo.html.twig' será renderizado #}
-                {% block content %}{% endblock %}
+                    {% include '_partials/flash_messages.html.twig' %}
+
+                    {# Este é o bloco que os templates filhos (dashboard, novo, editar) irão preencher #}
+                    {% block content %}{% endblock %}
+
+                </div>
             </main>
         </div>
     </div>
 {% endblock %}
 
-{# O Dashboard tem JS específico (ex: Feather icons) #}
 {% block javascripts %}
     {{ parent() }}
-    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    {# Carrega os ícones (Feather) se forem usados, ou remove se usar apenas Bootstrap Icons #}
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js" integrity="sha384-uO3SXW5IuS1ZpFPKugNNWqTZRRglnUJK6UAZ/gxOX80nxEkN9NcGZTftn6RzhGWE" crossorigin="anonymous"></script>
     <script>
-        feather.replace(); // Ativa os ícones do Feather (necessário para o seu 'novo.html.twig')
+        feather.replace({ 'aria-hidden': 'true' });
     </script>
-    {# JS específico do dashboard, se houver #}
-    <script src="{{ asset('assets/js/vendedor/dashboard.js') }}"></script>
 {% endblock %}
-
-{# O Dashboard não tem footer global #}
-{% block footer %}{% endblock %}

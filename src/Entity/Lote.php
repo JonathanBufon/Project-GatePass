@@ -152,4 +152,13 @@ class Lote
 
         return $this;
     }
+
+    /**
+     * TAREFA 1: Método de encapsulamento para a regra de negócio de estoque.
+     * Informa quantos ingressos já foram associados (vendidos ou reservados).
+     */
+    public function getQuantidadeVendida(): int
+    {
+        return $this->ingressos->count();
+    }
 }

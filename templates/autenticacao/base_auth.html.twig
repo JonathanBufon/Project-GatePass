@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Autenticação - GatePass{% endblock %}
+
+{# TAREFA 1: Aplicamos a classe do gradiente ao <body> #}
+{% block body_class %}bg-auth-gradient{% endblock %}
+
+{# TAREFA 2: Carregamos o arquivo CSS externo (em vez do <style> inline) #}
+{% block stylesheets %}
+    <link href="{{ asset('assets/css/registro/style.css') }}" rel="stylesheet">
+{% endblock %}
+
+{# Removemos header e footer #}
+{% block header %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{# TAREFA 3: Estrutura HTML Global (Inalterada) #}
+{% block main_content_wrapper %}
+    <div class="d-flex vh-100 align-items-center justify-content-center p-3">
+        <div class="auth-card">
+            <div class="row align-items-center">
+
+                {# --- COLUNA 1: IMAGEM (ESQUERDA) --- #}
+                <div class="col-md-6 auth-pic" data-tilt>
+                    <img src="{{ asset('assets/img/logo-gatepass-login-placeholder.svg') }}"
+                         class="img-fluid"
+                         alt="GatePass Login"
+                         style="max-width: 350px; transform: translateZ(50px);">
+                </div>
+
+                {# --- COLUNA 2: FORMULÁRIO (DIREITA) --- #}
+                <div class="col-12 col-md-6">
+                    {% include '_partials/flash_messages.html.twig' %}
+                    {% block auth_form %}{% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+{# TAREFA 4: JavaScript Global de Autenticação (Inalterado) #}
+{% block javascripts %}
+    {{ parent() }} {# Carrega o Bootstrap JS #}
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js" integrity="sha512-RD/ohJnaVT3HNBJjrOKqPzEHNjCUINSMM2Tdv1OQGrEIDjssKSFtfB8wVdKAifD1FFsPNFVN8jO71LNbM2f/dw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script>
+        VanillaTilt.init(document.querySelector("[data-tilt]"), {
+            max: 25,
+            speed: 400,
+            scale: 1.1,
+            glare: true,
+            "max-glare": 0.5
+        });
+    </script>
+{% endblock %}

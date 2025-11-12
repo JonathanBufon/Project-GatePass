@@ -1,3 +1,4 @@
+{# templates/vendedor/evento/novo.html.twig #}
 {% extends 'vendedor/base.html.twig' %}
 
 {% block title %}{{ page_title|default('Novo Evento') }} - Dashboard{% endblock %}
@@ -5,6 +6,7 @@
 {# Informamos ao Symfony para usar os blocos customizados deste arquivo #}
 {% form_theme eventoForm.lotes _self %}
 
+{# Este é o "molde" (prototype) para cada Lote #}
 {% block _evento_lotes_entry_widget %}
     <div class="list-group-item lote-item">
         <div class="row g-2 align-items-center">
@@ -28,7 +30,7 @@
         <h1 class="h2">{{ page_title|default('Novo Evento') }}</h1>
         <div class="btn-toolbar mb-2 mb-md-0">
             <a href="{{ path('app_vendedor_dashboard') }}" class="btn btn-sm btn-outline-secondary">
-                <span data-feather="arrow-left" class="align-text-bottom"></span>
+                <i class="bi bi-arrow-left me-1"></i>
                 Cancelar
             </a>
         </div>
@@ -41,6 +43,7 @@
             Detalhes do Evento
         </div>
         <div class="card-body">
+            {# ... (campos do formulário eventoForm) ... #}
             <div class="row">
                 <div class="col-md-8">
                     {{ form_row(eventoForm.nome) }}
@@ -95,16 +98,18 @@
     </div>
 
     <button type="submit" class="btn btn-primary mt-4">
-        <span data-feather="save" class="align-text-bottom"></span>
+        <i class="bi bi-save me-1"></i>
         Salvar Alterações
     </button>
 
+    {# --- CORREÇÃO 2: Fechar o formulário --- #}
     {{ form_end(eventoForm) }}
+
 {% endblock %}
 
 
 {% block javascripts %}
-    {# 1. Carrega o 'feather.js' do 'vendedor/base.html.twig' #}
+    {# 1. Carrega os scripts do 'vendedor/base.html.twig' (que carrega os do 'base.html.twig') #}
     {{ parent() }}
 
     {# 2. Carrega nosso script de coleção dedicado #}

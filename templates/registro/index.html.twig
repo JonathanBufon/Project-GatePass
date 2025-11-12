@@ -3,82 +3,173 @@
 
 {% block title %}Registrar - GatePass{% endblock %}
 
-{# Utiliza a classe de corpo específica do template Sign-in do Bootstrap #}
-{% block body_class %}body-signin text-center{% endblock %}
+{# Limpamos o body_class, pois o estilo agora é controlado pelo wrapper #}
+{% block body_class %}{% endblock %}
 
+{# TAREFA 1: Injetar os estilos do layout de autenticação #}
 {% block stylesheets %}
-    {{ parent() }}
-    <link href="{{ asset('assets/css/registro/style.css') }}" rel="stylesheet">
+    <style>
+        /* Garante que o layout ocupe 100% da altura */
+        html, body {
+            height: 100%;
+        }
+
+        /* Classe que aplica o fundo gradiente (da referência "Login_v1") */
+        .bg-auth-gradient {
+            background: #9053c7;
+            background: -webkit-linear-gradient(-135deg, #c850c0, #4158d0);
+            background: -o-linear-gradient(-135deg, #c850c0, #4158d0);
+            background: -moz-linear-gradient(-135deg, #c850c0, #4158d0);
+            background: linear-gradient(-135deg, #c850c0, #4158d0);
+            min-height: 100vh; /* Garante que cubra a tela */
+        }
+
+        /* * O "Card" branco central (da referência 'wrap-login100')
+         * Nota: Usamos 'auth-card' para compartilhar o estilo com 'login.html.twig'
+         */
+        .auth-card {
+            width: 100%;
+            max-width: 960px; /* Largura da referência */
+            background: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+
+            /* Padding responsivo (Desktop) */
+            padding: 5rem 7rem 2rem 5rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        }
+
+        /* Wrapper da imagem para o 'tilt' */
+        .auth-pic {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+
+        /* Ajustes responsivos (Tablet) */
+        @media (max-width: 992px) {
+            .auth-card {
+                padding: 4rem 3rem 2rem 3rem;
+            }
+        }
+
+        /* Ajustes responsivos (Mobile) */
+        @media (max-width: 768px) {
+            .auth-card {
+                padding: 3rem 1.5rem 2rem 1.5rem;
+            }
+            /* Ocultamos a imagem no mobile (como na referência) */
+            .auth-pic {
+                display: none !important;
+            }
+        }
+    </style>
 {% endblock %}
 
-{# Remove os blocos de header e footer para uma tela de autenticação limpa #}
+{# Remove os blocos de header e footer para uma tela limpa #}
 {% block header %}{% endblock %}
 {% block footer %}{% endblock %}
 
 {% block main_content_wrapper %}
-    <main class="form-signin w-100 m-auto">
+    {# TAREFA 1: Wrapper principal com o fundo gradiente e centralização #}
+    <div class="bg-auth-gradient d-flex vh-100 align-items-center justify-content-center p-3">
 
-        {# Renderiza mensagens flash (ex: sucesso, erro) #}
-        {% include '_partials/flash_messages.html.twig' %}
+        {# TAREFA 2: O "Card" branco central #}
+        <div class="auth-card">
 
-        {{ form_start(registrationForm, {'attr': {'novalidate': 'novalidate'}}) }}
+            <div class="row align-items-center">
 
-        <h1 class="h3 mb-3 fw-normal">Criar sua Conta</h1>
+                {# --- COLUNA 1: IMAGEM (ESQUERDA) --- #}
+                {# TAREFA 3: Adicionar o gancho 'data-tilt' para a animação #}
+                <div class="col-md-6 auth-pic" data-tilt>
+                    <img src="{{ asset('assets/img/logo-gatepass-login-placeholder.svg') }}"
+                         class="img-fluid"
+                         alt="GatePass Login"
+                         style="max-width: 350px; transform: translateZ(50px);">
+                </div>
 
-        {# Padrão Floating Labels do Bootstrap 5 #}
-        <div class="form-floating mb-2">
-            {{ form_widget(registrationForm.email, {'attr': {'placeholder': 'Email'}}) }}
-            {{ form_label(registrationForm.email) }}
-            {{ form_errors(registrationForm.email) }}
+                {# --- COLUNA 2: FORMULÁRIO (DIREITA) --- #}
+                <div class="col-12 col-md-6">
+
+                    {% include '_partials/flash_messages.html.twig' %}
+
+                    {{ form_start(registrationForm, {'attr': {'novalidate': 'novalidate'}}) }}
+
+                    <h1 class="h3 mb-3 fw-normal text-center">Criar sua Conta</h1>
+
+                    <div class="form-floating mb-2">
+                        {{ form_widget(registrationForm.email, {'attr': {'placeholder': 'Email'}}) }}
+                        {{ form_label(registrationForm.email) }}
+                        {{ form_errors(registrationForm.email) }}
+                    </div>
+
+                    <div class="form-floating mb-2">
+                        {{ form_widget(registrationForm.nomeCompleto, {'attr': {'placeholder': 'Nome Completo'}}) }}
+                        {{ form_label(registrationForm.nomeCompleto) }}
+                        {{ form_errors(registrationForm.nomeCompleto) }}
+                    </div>
+
+                    <div class="form-floating mb-2">
+                        {{ form_widget(registrationForm.cpf, {'attr': {'placeholder': 'CPF'}}) }}
+                        {{ form_label(registrationForm.cpf) }}
+                        {{ form_errors(registrationForm.cpf) }}
+                    </div>
+
+                    <div class="form-floating mb-2">
+                        {{ form_widget(registrationForm.plainPassword.first, {'attr': {'placeholder': 'Senha'}}) }}
+                        {{ form_label(registrationForm.plainPassword.first) }}
+                        {{ form_errors(registrationForm.plainPassword.first) }}
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        {{ form_widget(registrationForm.plainPassword.second, {'attr': {'placeholder': 'Confirmar Senha'}}) }}
+                        {{ form_label(registrationForm.plainPassword.second) }}
+                        {{ form_errors(registrationForm.plainPassword.second) }}
+                    </div>
+
+                    <div class="form-check text-start mb-3">
+                        {{ form_widget(registrationForm.agreeTerms) }}
+                        {{ form_label(registrationForm.agreeTerms, 'Li e aceito os termos de uso', {'label_attr': {'class': 'small'}}) }}
+                        {{ form_errors(registrationForm.agreeTerms) }}
+                    </div>
+
+                    <button class="w-100 btn btn-lg btn-primary" type="submit">Registrar</button>
+
+                    <div class="mt-4 small text-center">
+                        <p class="mb-2">
+                            Já tem uma conta? <a href="{{ path('app_login') }}">Fazer Login</a>
+                        </p>
+                        <p class="mb-0">
+                            Trabalhe conosco e <a href="{{ path('app_registro_vendedor') }}">seja um vendedor</a>
+                        </p>
+                    </div>
+
+                    {{ form_end(registrationForm) }}
+
+                </div>
+            </div>
         </div>
-
-        <div class="form-floating mb-2">
-            {{ form_widget(registrationForm.nomeCompleto, {'attr': {'placeholder': 'Nome Completo'}}) }}
-            {{ form_label(registrationForm.nomeCompleto) }}
-            {{ form_errors(registrationForm.nomeCompleto) }}
-        </div>
-
-        <div class="form-floating mb-2">
-            {{ form_widget(registrationForm.cpf, {'attr': {'placeholder': 'CPF'}}) }}
-            {{ form_label(registrationForm.cpf) }}
-            {{ form_errors(registrationForm.cpf) }}
-        </div>
-
-        <div class="form-floating mb-2">
-            {{ form_widget(registrationForm.plainPassword.first, {'attr': {'placeholder': 'Senha'}}) }}
-            {{ form_label(registrationForm.plainPassword.first) }}
-            {{ form_errors(registrationForm.plainPassword.first) }}
-        </div>
-
-        <div class="form-floating mb-3">
-            {{ form_widget(registrationForm.plainPassword.second, {'attr': {'placeholder': 'Confirmar Senha'}}) }}
-            {{ form_label(registrationForm.plainPassword.second) }}
-            {{ form_errors(registrationForm.plainPassword.second) }}
-        </div>
-
-        {#
-        MELHORIA 1:
-        Utilizando o padrão "form-check" do Bootstrap 5 para checkboxes.
-        Isso garante que o form_errors() renderize o .invalid-feedback corretamente.
-        #}
-        <div class="form-check text-start mb-3">
-            {{ form_widget(registrationForm.agreeTerms) }}
-            {{ form_label(registrationForm.agreeTerms, 'Li e aceito os termos de uso', {'label_attr': {'class': 'small'}}) }}
-            {{ form_errors(registrationForm.agreeTerms) }}
-        </div>
-
-        <button class="w-100 btn btn-lg btn-primary" type="submit">Registrar</button>
+    </div>
+{% endblock %}
 
 
-        <div class="mt-4 small">
-            <p class="mb-2">
-                Já tem uma conta? <a href="{{ path('app_login') }}">Fazer Login</a>
-            </p>
-            <p class="mb-0">
-                Trabalhe conosco e <a href="{{ path('app_registro_vendedor') }}">seja um vendedor</a>
-            </p>
-        </div>
+{# TAREFA 3: Adicionar o JavaScript da Animação #}
+{% block javascripts %}
+    {{ parent() }} {# Carrega o Bootstrap JS #}
 
-        {{ form_end(registrationForm) }}
-    </main>
+    {# 1. Carrega a versão VANILLA (sem jQuery) do tilt.js via CDN #}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js" integrity="sha512-RD/ohJnaVT3HNBJjrOKqPzEHNjCUINSMM2Tdv1OQGrEIDjssKSFtfB8wVdKAifD1FFsPNFVN8jO71LNbM2f/dw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script>
+        // 2. Inicializa o efeito no gancho 'data-tilt'
+        VanillaTilt.init(document.querySelector("[data-tilt]"), {
+            max: 25,
+            speed: 400,
+            scale: 1.1,
+            glare: true,
+            "max-glare": 0.5
+        });
+    </script>
 {% endblock %}
