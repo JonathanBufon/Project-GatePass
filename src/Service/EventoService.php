@@ -80,6 +80,22 @@ class EventoService
     }
 
     /**
+     * Eventos em destaque para a Home (futuros, publicados, com banner).
+     */
+    public function getEventosEmDestaque(int $limite = 4): array
+    {
+        return $this->eventoRepository->findFeatured($limite);
+    }
+
+    /**
+     * Banners para o carrossel da Home.
+     */
+    public function getBannersHome(int $limite = 3): array
+    {
+        return $this->eventoRepository->findHomeBanners($limite);
+    }
+
+    /**
      * Busca um evento específico por ID, mas apenas se ele estiver publicado.
      * Regra de Negócio: Um cliente não pode visualizar
      * eventos em 'RASCUNHO' ou 'CANCELADO' pela página pública.

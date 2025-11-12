@@ -1,57 +1,11 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}Pedido Confirmado! - GatePass{% endblock %}
-
-{#
-O 'base.html.twig' já fornece o <main> e <div class="container">
-Nós apenas preenchemos o bloco de conteúdo.
-#}
+{% block title %}Compra Confirmada - GatePass{% endblock %}
 {% block main_content %}
-
-    {#
-    Esta é a implementação do template "Jumbotron" do Bootstrap
-    dentro do nosso layout base.
-    #}
-    <div class="p-5 mb-4 bg-light rounded-3 mt-4 shadow-sm">
-        <div class="container-fluid py-5">
-
-            {# Exibimos as 'flash messages' que o Controller possa ter enviado #}
-            {% include '_partials/flash_messages.html.twig' %}
-
-            <h1 class="display-5 fw-bold text-success">
-                <i class="bi bi-check-circle-fill"></i> {# (Requer Bootstrap Icons) #}
-                Pagamento Aprovado!
-            </h1>
-
-            <p class="col-md-8 fs-4">
-                Seu pedido (<b>#{{ pedido.id }}</b>) foi confirmado com sucesso.
-            </p>
-            <p>
-                Os detalhes da sua compra e seus ingressos (simulados) foram enviados
-                para o e-mail: <strong>{{ app.user.email }}</strong>.
-            </p>
-
-            <hr class="my-4">
-
-            <h4 class="mb-3">Resumo da Compra</h4>
-            <ul class_("list-unstyled fs-5">
-                <li><strong>Valor Total:</strong> {{ pedido.valorTotal|format_currency('BRL') }}</li>
-                <li><strong>Itens:</strong> {{ pedido.ingressos|length }} ingresso(s)</li>
-                <li><strong>Data:</strong> {{ pedido.dataCriacao|date('d/m/Y H:i') }}</li>
-            </ul>
-
-            <div class_("mt-4">
-            <a href="{{ path('app_home') }}" class="btn btn-primary btn-lg" type="button">
-                Ver mais eventos
-            </a>
-
-            {# Este link aponta para uma futura área de "Meus Pedidos" #}
-            <a href="#" class="btn btn-outline-secondary btn-lg" type="button">
-                Meus Ingressos
-            </a>
-        </div>
-
-        </div>
-    </div>
-
+<div class="p-5 mb-4 bg-light rounded-3">
+  <div class="container py-5">
+    <h1 class="display-6">Compra Confirmada</h1>
+    <p class="col-md-8 fs-5">Seu pedido #{{ pedido.id }} foi aprovado. Obrigado por comprar com a GatePass.</p>
+    <a href="{{ path('app_home') }}" class="btn btn-primary btn-lg">Voltar aos eventos</a>
+  </div>
+</div>
 {% endblock %}

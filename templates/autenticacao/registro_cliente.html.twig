@@ -1,5 +1,5 @@
 {% extends 'base.html.twig' %}
-{% block title %}Registrar Vendedor - GatePass{% endblock %}
+{% block title %}Registrar - GatePass{% endblock %}
 {% block body_class %}bg-auth-gradient{% endblock %}
 {% block header %}{% endblock %}
 {% block footer %}{% endblock %}
@@ -9,18 +9,17 @@
     <div class="card-body p-4 p-md-5">
       <div class="text-center mb-4">
         <img src="{{ asset('assets/img/logo-gatepass.svg') }}" alt="GatePass" width="64" height="64" class="mb-2">
-        <h1 class="h4 mb-0">Criar conta de Vendedor</h1>
+        <h1 class="h4 mb-0">Criar sua Conta</h1>
       </div>
       {% include '_partials/flash_messages.html.twig' %}
       {{ form_start(registrationForm, {'attr': {'novalidate': 'novalidate'}}) }}
-        <div class="form-floating mb-2">{{ form_widget(registrationForm.email, {'attr': {'placeholder': 'Email de Acesso'}}) }}{{ form_label(registrationForm.email) }}{{ form_errors(registrationForm.email) }}</div>
-        <div class="form-floating mb-2">{{ form_widget(registrationForm.tipoDocumento, {'attr': {'class': 'form-select'}}) }}{{ form_label(registrationForm.tipoDocumento) }}{{ form_errors(registrationForm.tipoDocumento) }}</div>
-        <div class="form-floating mb-2">{{ form_widget(registrationForm.documento, {'attr': {'placeholder': 'CPF/CNPJ'}}) }}{{ form_label(registrationForm.documento) }}{{ form_errors(registrationForm.documento) }}</div>
-        <div class="form-floating mb-2">{{ form_widget(registrationForm.nomeFantasia, {'attr': {'placeholder': 'Nome Fantasia'}}) }}{{ form_label(registrationForm.nomeFantasia) }}{{ form_errors(registrationForm.nomeFantasia) }}</div>
+        <div class="form-floating mb-2">{{ form_widget(registrationForm.email, {'attr': {'placeholder': 'Email'}}) }}{{ form_label(registrationForm.email) }}{{ form_errors(registrationForm.email) }}</div>
+        <div class="form-floating mb-2">{{ form_widget(registrationForm.nomeCompleto, {'attr': {'placeholder': 'Nome Completo'}}) }}{{ form_label(registrationForm.nomeCompleto) }}{{ form_errors(registrationForm.nomeCompleto) }}</div>
+        <div class="form-floating mb-2">{{ form_widget(registrationForm.cpf, {'attr': {'placeholder': 'CPF'}}) }}{{ form_label(registrationForm.cpf) }}{{ form_errors(registrationForm.cpf) }}</div>
         <div class="form-floating mb-2">{{ form_widget(registrationForm.plainPassword.first, {'attr': {'placeholder': 'Senha'}}) }}{{ form_label(registrationForm.plainPassword.first) }}{{ form_errors(registrationForm.plainPassword.first) }}</div>
         <div class="form-floating mb-3">{{ form_widget(registrationForm.plainPassword.second, {'attr': {'placeholder': 'Confirmar Senha'}}) }}{{ form_label(registrationForm.plainPassword.second) }}{{ form_errors(registrationForm.plainPassword.second) }}</div>
         <div class="form-check text-start mb-3">{{ form_widget(registrationForm.agreeTerms) }} {{ form_label(registrationForm.agreeTerms, 'Li e aceito os termos de uso', {'label_attr': {'class': 'small'}}) }} {{ form_errors(registrationForm.agreeTerms) }}</div>
-        <button class="w-100 btn btn-primary btn-lg" type="submit">Registrar Vendedor</button>
+        <button class="w-100 btn btn-primary btn-lg" type="submit">Registrar</button>
         <div class="text-center mt-3">
           <a href="{{ path('app_home') }}" class="small">Voltar para a página inicial</a>
         </div>

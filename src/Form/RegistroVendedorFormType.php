@@ -41,6 +41,8 @@ class RegistroVendedorFormType extends AbstractType
                 ],
                 'expanded' => false,
                 'multiple' => false,
+                'placeholder' => 'Selecione...',
+                'required' => true,
                 'attr' => ['class' => 'form-select', 'data-mask-selector' => 'tipo'],
                 'constraints' => [new NotBlank(['message' => 'Selecione o tipo de documento.'])],
             ])

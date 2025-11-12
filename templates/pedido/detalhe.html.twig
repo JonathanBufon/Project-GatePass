@@ -1,0 +1,6 @@
+{% extends 'base.html.twig' %}
+{% block title %}Pedido #{{ pedido.id }} - GatePass{% endblock %}
+{% block main_content %}
+<h1 class="h4">Pedido #{{ pedido.id }}</h1>
+<p class="text-muted">Status: {{ pedido.status }}</p>
+{% endblock %}

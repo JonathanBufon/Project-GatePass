@@ -54,4 +54,37 @@ class EventoRepository extends ServiceEntityRepository
             ->getQuery()
             ->getOneOrNullResult();
     }
+
+    /**
+     * Eventos em destaque: publicados, com banner e data futura.
+     */
+    public function findFeatured(int $limite = 4): array
+    {
+        $qb = $this->createQueryBuilder('e')
+            ->where('e.status = :status')
+            ->andWhere('e.urlBanner IS NOT NULL')
+            ->andWhere('e.dataHoraInicio > :agora')
+            ->setParameter('status', 'PUBLICADO')
+            ->setParameter('agora', new \DateTime())
+            ->orderBy('e.dataHoraInicio', 'ASC')
+            ->setMaxResults($limite);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * Banners da Home: reusa eventos com banner (pode ser substituído por entidade Banner futuramente).
+     */
+    public function findHomeBanners(int $limite = 3): array
+    {
+        return $this->createQueryBuilder('e')
+            ->select('partial e.{id,nome,descricao,urlBanner}')
+            ->where('e.status = :status')
+            ->andWhere('e.urlBanner IS NOT NULL')
+            ->setParameter('status', 'PUBLICADO')
+            ->orderBy('e.dataHoraInicio', 'ASC')
+            ->setMaxResults($limite)
+            ->getQuery()
+            ->getResult();
+    }
 }

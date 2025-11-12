@@ -22,7 +22,7 @@ class EventoController extends AbstractController
      * Define a rota principal (Homepage) do GatePass.
      * Esta rota exibe a "Listagem de Eventos" (template Album).
      */
-    #[Route('/', name: 'app_home', methods: ['GET'])]
+    #[Route('/eventos', name: 'app_evento_index', methods: ['GET'])]
     public function index(): Response
     {
         $eventos = $this->eventoService->getEventosPublicados();

@@ -1,92 +1,16 @@
 {% extends 'base.html.twig' %}
-{% block title %}Finalizar Pedido - GatePass{% endblock %}
-{% block body_class %}bg-light{% endblock %}
-
-{% block stylesheets %}
-    {{ parent() }}
-    <link href="{{ asset('assets/css/checkout/style.css') }}" rel="stylesheet">
-{% endblock %}
-
-{% block main_content_wrapper %}
-    <div class="container container-checkout" style="padding-top: 60px;">
-        <main>
-            <div class="py-5 text-center">
-                <h2>Checkout</h2>
-                <p class="lead">
-                    Revise seu pedido e finalize sua compra.
-                    Pedido #{{ pedido.id }}
-                </p>
-            </div>
-
-            {% include '_partials/flash_messages.html.twig' %}
-
-            {#
-            1. O form_start() renderiza <form method="POST">
-               e o action="{{ path('app_checkout', {id: pedido.id}) }}"
-               e o campo _csrf_token (Segurança)
-            #}
-            {{ form_start(pagamentoForm, {'action': path('app_checkout', {id: pedido.id})}) }}
-
-            <div class="row g-5">
-                <div class="col-md-5 col-lg-4 order-md-last">
-                    <h4 class="d-flex justify-content-between align-items-center mb-3">
-                        <span class="text-primary">Seu Pedido</span>
-                        <span class="badge bg-primary rounded-pill">{{ pedido.ingressos|length }}</span>
-                    </h4>
-                    <ul class="list-group mb-3">
-                        {% for ingresso in pedido.ingressos %}
-                            <li class="list-group-item d-flex justify-content-between lh-sm">
-                                <div>
-                                    <h6 class="my-0">{{ ingresso.lote.evento.nome }}</h6>
-                                    <small class="text-muted">{{ ingresso.lote.nome }}</small>
-                                </div>
-                                <span class="text-muted">
-                                    {{ ingresso.valorPago|format_currency('BRL') }}
-                                </span>
-                            </li>
-                        {% endfor %}
-                        <li class="list-group-item d-flex justify-content-between bg-light">
-                            <span class="fw-bold">Total (BRL)</span>
-                            <strong>{{ pedido.valorTotal|format_currency('BRL') }}</strong>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="col-md-7 col-lg-8">
-                    <h4 class="mb-3">Pagamento</h4>
-
-                    {# 2. Renderiza os campos do PagamentoFormType #}
-                    <div class="my-3">
-                        {{ form_row(pagamentoForm.paymentMethod) }}
-                    </div>
-
-                    {# Simulação de campos de Cartão de Crédito #}
-                    <div class="credit-card-fields">
-                        <div class="row gy-3">
-                            <div class="col-md-6">
-                                {{ form_row(pagamentoForm.ccName) }}
-                            </div>
-                            <div class="col-md-6">
-                                {{ form_row(pagamentoForm.ccNumber) }}
-                            </div>
-                            <div class="col-md-3">
-                                {{ form_row(pagamentoForm.ccExpiration) }}
-                            </div>
-                            <div class="col-md-3">
-                                {{ form_row(pagamentoForm.ccCvv) }}
-                            </div>
-                        </div>
-                    </div>
-
-                    <hr class="my-4">
-
-                    <button class="w-100 btn btn-primary btn-lg" type="submit">
-                        Finalizar e Pagar (Simulado)
-                    </button>
-                </div>
-            </div>
-
-            {{ form_end(pagamentoForm) }} {# 3. Fecha o formulário #}
-        </main>
-    </div>
+{% block title %}Pagamento - GatePass{% endblock %}
+{% block main_content %}
+<h1 class="h4 mb-4">Pagamento</h1>
+{% if pedido is defined %}
+  <div class="card mb-3"><div class="card-body">Pedido #{{ pedido.id }}</div></div>
+{% endif %}
+{% if pagamentoForm is defined %}
+  <div class="card"><div class="card-body">
+    {{ form_start(pagamentoForm) }}
+      {{ form_widget(pagamentoForm) }}
+      <button class="btn btn-primary mt-3">Pagar</button>
+    {{ form_end(pagamentoForm) }}
+  </div></div>
+{% endif %}
 {% endblock %}
