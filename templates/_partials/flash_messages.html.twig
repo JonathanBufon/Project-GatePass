@@ -2,12 +2,17 @@
 Este template é responsável por renderizar todas as 'flash messages'
 armazenadas na sessão pelo Controller.
 #}
+{# Renderiza flash messages como Toasts do Bootstrap 5.2 #}
 {% for label, messages in app.flashes %}
-    {% for message in messages %}
-        {# Usamos as classes de Alerta do Bootstrap 5.2 #}
-        <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  {% for message in messages %}
+    {% set bg = ('success' in label) ? 'success' : (('warning' in label) ? 'warning' : (('error' in label or 'danger' in label) ? 'danger' : (('info' in label) ? 'info' : 'secondary'))) %}
+    <div class="toast align-items-center text-bg-{{ bg }} border-0 fade show mb-2" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="4500">
+      <div class="d-flex">
+        <div class="toast-body">
+          {{ message }}
         </div>
-    {% endfor %}
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    </div>
+  {% endfor %}
 {% endfor %}

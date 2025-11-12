@@ -3,11 +3,14 @@
 namespace App\Entity;
 
 use App\Repository\VendedorRepository;
+use App\Enum\TipoDocumento;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: VendedorRepository::class)]
+#[UniqueEntity(fields: ['documento'], message: 'Já existe um vendedor com este documento.')]
 class Vendedor
 {
     #[ORM\Id]
@@ -18,8 +21,11 @@ class Vendedor
     #[ORM\Column(length: 255)]
     private ?string $nomeFantasia = null;
 
-    #[ORM\Column(length: 18)]
-    private ?string $cnpj = null;
+    #[ORM\Column(length: 255, unique: true)]
+    private ?string $documento = null; // apenas dígitos (CPF ou CNPJ)
+
+    #[ORM\Column(enumType: TipoDocumento::class)]
+    private ?TipoDocumento $tipoDocumento = null; // 'cpf' ou 'cnpj'
 
     #[ORM\OneToOne(inversedBy: 'vendedor', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
@@ -53,14 +59,26 @@ class Vendedor
         return $this;
     }
 
-    public function getCnpj(): ?string
+    public function getDocumento(): ?string
     {
-        return $this->cnpj;
+        return $this->documento;
     }
 
-    public function setCnpj(string $cnpj): static
+    public function setDocumento(string $documento): static
     {
-        $this->cnpj = $cnpj;
+        $this->documento = $documento;
+
+        return $this;
+    }
+
+    public function getTipoDocumento(): ?TipoDocumento
+    {
+        return $this->tipoDocumento;
+    }
+
+    public function setTipoDocumento(TipoDocumento $tipoDocumento): static
+    {
+        $this->tipoDocumento = $tipoDocumento;
 
         return $this;
     }

@@ -62,7 +62,8 @@ class UsuarioService
         string $email,
         string $plainPassword,
         string $nomeFantasia,
-        string $cnpj
+        string $documento,
+        string $tipoDocumento
     ): void {
         $this->validarEmailDuplicado($email);
 
@@ -75,8 +76,13 @@ class UsuarioService
 
         $vendedor = new Vendedor();
         $vendedor->setNomeFantasia($nomeFantasia);
-        $vendedor->setCnpj($cnpj);
         $vendedor->setUsuario($usuario);
+        $vendedor->setDocumento($this->somenteDigitos($documento));
+        $vendedor->setTipoDocumento(match (strtolower($tipoDocumento)) {
+            'cpf' => \App\Enum\TipoDocumento::CPF,
+            'cnpj' => \App\Enum\TipoDocumento::CNPJ,
+            default => \App\Enum\TipoDocumento::CNPJ,
+        });
 
         $this->em->persist($usuario);
         $this->em->persist($vendedor);
@@ -93,5 +99,10 @@ class UsuarioService
         if ($existe) {
             throw new CustomUserMessageAuthenticationException('Este e-mail já está em uso.');
         }
+    }
+
+    private function somenteDigitos(string $valor): string
+    {
+        return preg_replace('/\D+/', '', $valor) ?? '';
     }
 }

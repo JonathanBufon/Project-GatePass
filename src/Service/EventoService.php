@@ -76,10 +76,7 @@ class EventoService
      */
     public function getEventosPublicados(): array
     {
-        return $this->eventoRepository->findBy(
-            ['status' => 'PUBLICADO'],
-            ['dataHoraInicio' => 'ASC']
-        );
+        return $this->eventoRepository->findPublishedList();
     }
 
     /**
@@ -89,10 +86,7 @@ class EventoService
      */
     public function findEventoPublicado(int $id): ?Evento
     {
-        return $this->eventoRepository->findOneBy([
-            'id' => $id,
-            'status' => 'PUBLICADO'
-        ]);
+        return $this->eventoRepository->findOnePublishedById($id);
     }
 
     /**

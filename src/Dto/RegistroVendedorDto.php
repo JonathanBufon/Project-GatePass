@@ -6,5 +6,6 @@ class RegistroVendedorDto
 {
     public string $email;
     public string $nomeFantasia;
-    public string $cnpj;
+    public string $documento; // apenas dígitos
+    public string $tipoDocumento; // 'cpf' | 'cnpj'
 }

@@ -33,10 +33,11 @@ class RegistroVendedorController extends AbstractController
 
             try {
                 $this->usuarioService->registrarVendedor(
-                    $data['email'],
+                    $data->email,
                     $form->get('plainPassword')->getData(),
-                    $data['nomeFantasia'],
-                    $data['cnpj']
+                    $data->nomeFantasia,
+                    $data->documento,
+                    $data->tipoDocumento
                 );
 
                 $this->addFlash('success', 'Registro de vendedor realizado com sucesso! Faça seu login.');

@@ -1,19 +1,15 @@
-{# Agora estende o novo layout de autenticação #}
 {% extends 'autenticacao/base_auth.html.twig' %}
 
 {% block title %}Login - GatePass{% endblock %}
 
-{# Todo o CSS, JS e HTML repetido foi removido #}
-
-{# Preenchemos o bloco 'auth_form' definido no layout pai #}
 {% block auth_form %}
-    <form method="post" action="{{ path('app_login') }}">
-        <h1 class="h3 mb-3 fw-normal text-center">
-            Fazer Login
-        </h1>
+    <form method="post" action="{{ path('app_login') }}" novalidate>
+        <h1 class="h4 mb-4 fw-semibold text-center">Fazer login</h1>
 
         {% if error %}
-            <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+            <div class="alert alert-danger mb-3" role="alert">
+                {{ error.messageKey|trans(error.messageData, 'security') }}
+            </div>
         {% endif %}
 
         <div class="form-floating mb-3">
@@ -21,23 +17,29 @@
             <label for="inputEmail">Email</label>
         </div>
 
-        <div class="form-floating mb-3">
+        <div class="form-floating mb-2">
             <input type="password" name="_password" id="inputPassword" class="form-control" autocomplete="current-password" required placeholder="Senha">
             <label for="inputPassword">Senha</label>
         </div>
 
-        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-
-        <div class="checkbox mb-3 text-start">
-            <label>
-                <input type="checkbox" name="_remember_me" checked> Lembrar-me
-            </label>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="1" id="rememberMe" name="_remember_me" checked>
+                <label class="form-check-label" for="rememberMe">Lembrar-me</label>
+            </div>
+            <a class="small text-decoration-none" href="#" data-bs-toggle="tooltip" title="Entre em contato com o suporte para recuperar sua senha.">Esqueci minha senha</a>
         </div>
 
-        <button class="w-100 btn btn-lg btn-primary" type="submit">Entrar</button>
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
-        <p class="mt-3 mb-0 text-center">
-            Não tem uma conta? <a href="{{ path('app_registro') }}">Registrar</a>
-        </p>
+        <button class="w-100 btn btn-primary btn-lg" type="submit">Entrar</button>
+
+        <div class="text-center mt-3">
+            <span class="text-muted small">Não tem uma conta?</span>
+            <a href="{{ path('app_registro') }}" class="small">Registrar</a>
+        </div>
+        <div class="text-center mt-2">
+            <a href="{{ path('app_home') }}" class="small text-decoration-none">Voltar à página inicial</a>
+        </div>
     </form>
 {% endblock %}
