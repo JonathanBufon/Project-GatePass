@@ -4,6 +4,7 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+    app.custom_errors_dev: true # habilita os templates de erro personalizados em dev
 
 services:
     # default configuration for services in *this* file
@@ -23,6 +24,10 @@ services:
     # Interface bindings (Ports -> Adapters)
     App\Port\Payment\PaymentGatewayInterface: '@App\Adapter\Payment\SandboxPaymentGateway'
     App\Port\Email\TransactionalEmailInterface: '@App\Adapter\Email\MailerTransactionalEmail'
+
+    App\EventListener\CustomExceptionListener:
+        arguments:
+            $customErrorsDev: '%app.custom_errors_dev%'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

@@ -1,4 +1,39 @@
-{% extends '@Twig/Exception/error.html.twig' %}
-{% block error_message %}
-Erro 403: Acesso Negado. Você não tem as permissões necessárias para visualizar esta página ou executar esta ação.
+{# templates/bundles/TwigBundle/Exception/error403.html.twig #}
+
+{# Este template assume que você tenha um 'base.html.twig' 
+   que carrega o app.css (tema Dark/Purple) e define blocos. #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Acesso Negado (403){% endblock %}
+
+{% block body %}
+<div class="container text-center" style="padding-top: 10vh; padding-bottom: 10vh;">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+
+            {# Código do erro, estilizado no tema #}
+            <h1 class="display-1 fw-bold" style="color: var(--color-primary, #9886f7); font-size: 8rem;">
+                403
+            </h1>
+
+            <h2 class="h1 fw-bold mb-3">Acesso Negado</h2>
+
+            {# Comentário/explicação personalizada #}
+            <p class="fs-5 text-light mb-4">
+                Você não tem as permissões necessárias para visualizar esta página 
+                ou executar esta ação.
+            </p>
+
+            <p class="text-light mb-4">
+                Se você acredita que isso é um erro, verifique se está logado na conta correta.
+            </p>
+
+            <a href="{{ path('app_home') }}" class="btn btn-primary btn-lg">
+                Voltar para a Página Inicial
+            </a>
+
+        </div>
+    </div>
+}</div>
 {% endblock %}
