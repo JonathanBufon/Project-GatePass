@@ -1,0 +1,2 @@
+parameters:
+    app.custom_errors_dev: true
