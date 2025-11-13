@@ -1,4 +1,13 @@
 {
+    "name": "jonathan/gatepass",
+    "description": "Software para compra e venda de ingressos",
+    "authors": [
+        {
+            "name": "Jonatahn Bufon",
+            "email": "jonathanbufon@gmail.com",
+            "role": "Developer"
+        }
+    ],
     "type": "project",
     "license": "proprietary",
     "minimum-stability": "stable",
