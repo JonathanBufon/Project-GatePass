@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Service\EventoService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -23,12 +24,20 @@ class EventoController extends AbstractController
      * Esta rota exibe a "Listagem de Eventos" (template Album).
      */
     #[Route('/eventos', name: 'app_evento_index', methods: ['GET'])]
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $eventos = $this->eventoService->getEventosPublicados();
+        $filtros = [
+            'q' => trim((string) $request->query->get('q', '')),
+            'local' => trim((string) $request->query->get('local', '')),
+            'dataInicio' => $request->query->get('dataInicio'),
+            'dataFim' => $request->query->get('dataFim'),
+        ];
+
+        $eventos = $this->eventoService->searchEventosPublicados($filtros);
 
         $response = $this->render('evento/index.html.twig', [
             'eventos' => $eventos,
+            'filtros' => $filtros,
         ]);
         $response->setPublic();
         $response->setMaxAge(120);

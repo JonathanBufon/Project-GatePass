@@ -96,8 +96,28 @@ footer .text-muted { color: var(--color-text-muted) !important; }
 .form-control:focus, .form-select:focus {
   border-color: var(--color-primary);
   box-shadow: var(--focus-ring);
+  background-color: var(--color-bg-body);
+  color: var(--color-text);
 }
 .form-check-input:checked { background-color: var(--color-primary); border-color: var(--color-primary); }
+
+/* Floating labels: keep dark background and accent label on focus/filled */
+.form-floating > .form-control {
+  background-color: var(--color-bg-body);
+  color: var(--color-text);
+}
+.form-floating > label {
+  color: var(--color-text-secondary);
+}
+.form-floating > .form-control:focus ~ label,
+.form-floating > .form-control:not(:placeholder-shown) ~ label {
+  color: var(--color-accent-light);
+}
+
+/* Bootstrap floating label uses ::after background — make it dark */
+.form-floating > label::after {
+  background-color: var(--color-bg-body) !important;
+}
 
 /* Tables */
 .table { color: var(--color-text); }

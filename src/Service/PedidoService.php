@@ -48,7 +48,12 @@ class PedidoService
             throw new AccessDeniedException('Ação permitida apenas para clientes.');
         }
 
-        $pedido = $this->pedidoRepository->findPendentePorCliente($cliente) ?? $this->criarPedido($cliente);
+        $pedido = $this->pedidoRepository->findPendentePorCliente($cliente);
+        if ($pedido && $pedido->isExpirado()) {
+            // Pedido expirado: descarta e cria um novo
+            $pedido = null;
+        }
+        $pedido = $pedido ?? $this->criarPedido($cliente);
 
         // A validação de estoque ocorrerá dentro deste método
         $this->adicionarIngressos($pedido, $lote, $quantidade);
@@ -122,6 +127,8 @@ class PedidoService
     {
         $pedido = new Pedido();
         $pedido->setCliente($cliente);
+        // Define janela de reserva de 10 minutos
+        $pedido->setExpiraEm((new \DateTimeImmutable('+10 minutes')));
         $this->em->persist($pedido);
 
         return $pedido;

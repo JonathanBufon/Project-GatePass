@@ -36,6 +36,10 @@ class Lote
     #[ORM\JoinColumn(nullable: false)]
     private ?Evento $evento = null;
 
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Setor $setor = null;
+
     /**
      * @var Collection<int, Ingresso>
      */
@@ -124,6 +128,18 @@ class Lote
         return $this;
     }
 
+    public function getSetor(): ?Setor
+    {
+        return $this->setor;
+    }
+
+    public function setSetor(?Setor $setor): static
+    {
+        $this->setor = $setor;
+
+        return $this;
+    }
+
     /**
      * @return Collection<int, Ingresso>
      */
@@ -160,6 +176,13 @@ class Lote
      */
     public function getQuantidadeVendida(): int
     {
-        return $this->ingressos->count();
+        $count = 0;
+        foreach ($this->ingressos as $ingresso) {
+            $status = method_exists($ingresso, 'getStatus') ? $ingresso->getStatus() : null;
+            if ($status !== 'CANCELADO') {
+                $count++;
+            }
+        }
+        return $count;
     }
 }

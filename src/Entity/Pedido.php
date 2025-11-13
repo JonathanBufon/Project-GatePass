@@ -20,8 +20,14 @@ class Pedido
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     private ?\DateTimeImmutable $dataCriacao = null;
 
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $expiraEm = null;
+
     #[ORM\Column(length: 50)]
     private ?string $status = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTime $dataPagamento = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
     private ?string $valorTotal = null;
@@ -64,6 +70,18 @@ class Pedido
         return $this;
     }
 
+    public function getExpiraEm(): ?\DateTimeImmutable
+    {
+        return $this->expiraEm;
+    }
+
+    public function setExpiraEm(?\DateTimeImmutable $expiraEm): static
+    {
+        $this->expiraEm = $expiraEm;
+
+        return $this;
+    }
+
     public function getStatus(): ?string
     {
         return $this->status;
@@ -74,6 +92,23 @@ class Pedido
         $this->status = $status;
 
         return $this;
+    }
+
+    public function getDataPagamento(): ?\DateTime
+    {
+        return $this->dataPagamento;
+    }
+
+    public function setDataPagamento(?\DateTime $dataPagamento): static
+    {
+        $this->dataPagamento = $dataPagamento;
+
+        return $this;
+    }
+
+    public function isExpirado(): bool
+    {
+        return $this->expiraEm !== null && new \DateTimeImmutable() > $this->expiraEm;
     }
 
     public function getValorTotal(): ?string

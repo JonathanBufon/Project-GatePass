@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use App\Enum\EventoStatus;
+use App\Enum\TipoEstrutura;
 use App\Repository\EventoRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -34,8 +36,12 @@ class Evento
     #[ORM\Column]
     private ?\DateTime $dataHoraFim = null;
 
-    #[ORM\Column(length: 50)]
-    private ?string $status = null;
+
+    #[ORM\Column(enumType: EventoStatus::class)]
+    private ?EventoStatus $status = null;
+
+    #[ORM\Column(enumType: TipoEstrutura::class, nullable: true)]
+    private ?TipoEstrutura $tipoEstrutura = null;
 
     #[ORM\Column]
     private ?int $capacidadeTotal = null;
@@ -61,8 +67,8 @@ class Evento
     {
         $this->lotes = new ArrayCollection();
 
-        // Tarefa 1: Aplicar a regra de negócio de status inicial.
-        $this->status = 'RASCUNHO';
+        // Status inicial padrão
+        $this->status = EventoStatus::RASCUNHO;
     }
 
     public function getId(): ?int
@@ -130,17 +136,26 @@ class Evento
         return $this;
     }
 
-    public function getStatus(): ?string
+    public function getStatus(): ?EventoStatus
     {
         return $this->status;
     }
 
-    public function setStatus(string $status): static
+    public function setStatus(EventoStatus $status): static
     {
-        // Futuramente, este 'setter' pode ser privatizado ou conter
-        // lógica de transição de estado (State Pattern),
-        // mas por enquanto, o construtor resolve o estado inicial.
         $this->status = $status;
+
+        return $this;
+    }
+
+    public function getTipoEstrutura(): ?TipoEstrutura
+    {
+        return $this->tipoEstrutura;
+    }
+
+    public function setTipoEstrutura(?TipoEstrutura $tipoEstrutura): static
+    {
+        $this->tipoEstrutura = $tipoEstrutura;
 
         return $this;
     }

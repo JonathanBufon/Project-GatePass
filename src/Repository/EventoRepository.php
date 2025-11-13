@@ -35,7 +35,7 @@ class EventoRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('e')
             ->select('partial e.{id,nome,local,dataHoraInicio,status,urlBanner}')
             ->where('e.status = :status')
-            ->setParameter('status', 'PUBLICADO')
+            ->setParameter('status', \App\Enum\EventoStatus::PUBLICADO)
             ->orderBy('e.dataHoraInicio', 'ASC')
             ->getQuery()
             ->getResult();
@@ -50,7 +50,7 @@ class EventoRepository extends ServiceEntityRepository
             ->where('e.id = :id')
             ->andWhere('e.status = :status')
             ->setParameter('id', $id)
-            ->setParameter('status', 'PUBLICADO')
+            ->setParameter('status', \App\Enum\EventoStatus::PUBLICADO)
             ->getQuery()
             ->getOneOrNullResult();
     }
@@ -64,7 +64,7 @@ class EventoRepository extends ServiceEntityRepository
             ->where('e.status = :status')
             ->andWhere('e.urlBanner IS NOT NULL')
             ->andWhere('e.dataHoraInicio > :agora')
-            ->setParameter('status', 'PUBLICADO')
+            ->setParameter('status', \App\Enum\EventoStatus::PUBLICADO)
             ->setParameter('agora', new \DateTime())
             ->orderBy('e.dataHoraInicio', 'ASC')
             ->setMaxResults($limite);
@@ -81,10 +81,41 @@ class EventoRepository extends ServiceEntityRepository
             ->select('partial e.{id,nome,descricao,urlBanner}')
             ->where('e.status = :status')
             ->andWhere('e.urlBanner IS NOT NULL')
-            ->setParameter('status', 'PUBLICADO')
+            ->setParameter('status', \App\Enum\EventoStatus::PUBLICADO)
             ->orderBy('e.dataHoraInicio', 'ASC')
             ->setMaxResults($limite)
             ->getQuery()
             ->getResult();
+    }
+
+    /**
+     * Busca publicada com filtros opcionais
+     * filtros: q (nome contains), local (contains), dataInicio, dataFim
+     */
+    public function searchPublishedWithFilters(array $filtros): array
+    {
+        $qb = $this->createQueryBuilder('e')
+            ->where('e.status = :status')
+            ->setParameter('status', \App\Enum\EventoStatus::PUBLICADO)
+            ->orderBy('e.dataHoraInicio', 'ASC');
+
+        if (!empty($filtros['q'])) {
+            $qb->andWhere('LOWER(e.nome) LIKE :q')
+               ->setParameter('q', '%' . strtolower($filtros['q']) . '%');
+        }
+        if (!empty($filtros['local'])) {
+            $qb->andWhere('LOWER(e.local) LIKE :local')
+               ->setParameter('local', '%' . strtolower($filtros['local']) . '%');
+        }
+        if (!empty($filtros['dataInicio'])) {
+            $qb->andWhere('e.dataHoraInicio >= :dataInicio')
+               ->setParameter('dataInicio', new \DateTime($filtros['dataInicio']));
+        }
+        if (!empty($filtros['dataFim'])) {
+            $qb->andWhere('e.dataHoraInicio <= :dataFim')
+               ->setParameter('dataFim', new \DateTime($filtros['dataFim']));
+        }
+
+        return $qb->getQuery()->getResult();
     }
 }

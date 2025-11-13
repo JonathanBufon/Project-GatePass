@@ -3,8 +3,10 @@
 namespace App\Form;
 
 use App\Entity\Evento;
+use App\Enum\TipoEstrutura;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -25,6 +27,13 @@ class EventoFormType extends AbstractType
             ->add('nome', TextType::class, [
                 'label' => 'Nome do Evento',
                 'attr' => ['class' => 'form-control', 'placeholder' => 'Ex: Show de Lançamento']
+            ])
+            ->add('tipoEstrutura', EnumType::class, [
+                'class' => TipoEstrutura::class,
+                'label' => 'Estrutura do Evento',
+                'choice_label' => fn(TipoEstrutura $e) => match($e) { TipoEstrutura::PISTA => 'Pista', TipoEstrutura::ASSENTOS_NUMERADOS => 'Assentos Numerados' },
+                'placeholder' => 'Selecione...',
+                'required' => true,
             ])
             ->add('local', TextType::class, [
                 'label' => 'Local',
@@ -53,16 +62,6 @@ class EventoFormType extends AbstractType
                 'label' => 'URL do Banner (Opcional)',
                 'required' => false,
                 'attr' => ['class' => 'form-control', 'placeholder' => 'https://...']
-            ])
-
-            ->add('lotes', CollectionType::class, [
-                'entry_type' => LoteFormType::class,
-                'entry_options' => ['label' => false],
-                'allow_add' => true,
-                'allow_delete' => true,
-                'by_reference' => false,
-                'label' => 'Lotes de Ingressos',
-                'prototype_name' => '__lote_proto__',
             ]);
     }
 

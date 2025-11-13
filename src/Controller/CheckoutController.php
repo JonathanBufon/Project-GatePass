@@ -73,7 +73,7 @@ class CheckoutController extends AbstractController
 
         // O pedido foi realmente APROVADO?
         // (Previne acesso direto à URL de um pedido PENDENTE ou RECUSADO)
-        if ($pedido->getStatus() !== 'APROVADO') {
+        if ($pedido->getStatus() !== 'PAGO') {
             $this->addFlash('warning', 'Este pedido ainda não foi aprovado.');
             // Se estiver pendente, manda de volta ao checkout
             if ($pedido->getStatus() === 'PENDENTE') {

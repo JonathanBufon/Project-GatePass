@@ -78,7 +78,8 @@ class EventoController extends AbstractController
 
         return $this->render('vendedor/evento/novo.html.twig', [
             'eventoForm' => $form->createView(),
-            'page_title' => 'Editar Evento: ' . $evento->getNome()
+            'page_title' => 'Editar Evento: ' . $evento->getNome(),
+            'evento' => $evento,
         ]);
     }
 

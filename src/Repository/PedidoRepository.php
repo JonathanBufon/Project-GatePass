@@ -34,4 +34,22 @@ class PedidoRepository extends ServiceEntityRepository
             ->getQuery()
             ->getOneOrNullResult(); // Retorna 1 Pedido ou null
     }
+
+    /**
+     * Lista pedidos pendentes expirados (expiraEm < now).
+     * Usado pelo comando de liberação de reservas.
+     * @return Pedido[]
+     */
+    public function findExpiredPending(): array
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.status = :status')
+            ->andWhere('p.expiraEm IS NOT NULL')
+            ->andWhere('p.expiraEm < :agora')
+            ->setParameter('status', 'PENDENTE')
+            ->setParameter('agora', new \DateTimeImmutable())
+            ->orderBy('p.expiraEm', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }

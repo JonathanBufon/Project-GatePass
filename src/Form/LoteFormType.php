@@ -26,8 +26,17 @@ class LoteFormType extends AbstractType
             ])
             ->add('preco', MoneyType::class, [
                 'label' => 'Preço (R$)',
-                'currency' => 'BRL', // Define a moeda (Real Brasileiro)
-                'attr' => ['class' => 'form-control']
+                'currency' => 'BRL',
+                'scale' => 2,
+                'html5' => true,
+                'attr' => [
+                    'class' => 'form-control',
+                    'inputmode' => 'decimal',
+                    'step' => '0.01',
+                    'min' => '0',
+                    'placeholder' => '0.00',
+                    'data-mask' => 'money'
+                ]
             ])
             ->add('quantidadeTotal', IntegerType::class, [
                 'label' => 'Qtd. Ingressos',

@@ -52,7 +52,7 @@ class EventoService
     public function publicarEvento(Evento $evento): void
     {
         // Regra de Negócio 1: Só é possível publicar eventos em RASCUNHO.
-        if ($evento->getStatus() !== 'RASCUNHO') {
+        if ($evento->getStatus() !== \App\Enum\EventoStatus::RASCUNHO) {
             throw new \LogicException('Este evento não pode ser publicado, pois não está em modo Rascunho.');
         }
 
@@ -62,7 +62,7 @@ class EventoService
         }
 
         // Transição de Estado
-        $evento->setStatus('PUBLICADO');
+        $evento->setStatus(\App\Enum\EventoStatus::PUBLICADO);
 
         // Persistência
         $this->em->flush();
@@ -77,6 +77,14 @@ class EventoService
     public function getEventosPublicados(): array
     {
         return $this->eventoRepository->findPublishedList();
+    }
+
+    /**
+     * Pesquisa eventos publicados com filtros opcionais: q, local, dataInicio, dataFim.
+     */
+    public function searchEventosPublicados(array $filtros): array
+    {
+        return $this->eventoRepository->searchPublishedWithFilters($filtros);
     }
 
     /**

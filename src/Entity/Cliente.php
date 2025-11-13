@@ -3,11 +3,13 @@
 namespace App\Entity;
 
 use App\Repository\ClienteRepository;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ClienteRepository::class)]
+#[UniqueEntity(fields: ['cpf'], message: 'Já existe um cliente com este CPF.')]
 class Cliente
 {
     #[ORM\Id]
@@ -18,7 +20,7 @@ class Cliente
     #[ORM\Column(length: 255)]
     private ?string $nomeCompleto = null;
 
-    #[ORM\Column(length: 14)]
+    #[ORM\Column(length: 14, unique: true)]
     private ?string $cpf = null;
 
     #[ORM\OneToOne(inversedBy: 'cliente', cascade: ['persist', 'remove'])]
