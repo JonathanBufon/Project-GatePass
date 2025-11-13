@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <style>
+    body { font-family: -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; color:#222; }
+    .ticket { border:2px dashed #6f42c1; border-radius:12px; padding:16px; max-width:640px; margin:0 auto; }
+    .header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+    .title { font-size:20px; font-weight:700; }
+    .meta { color:#666; font-size:12px; }
+    .qr { text-align:right; }
+    .qr img { width:180px; height:180px; }
+    .row { display:flex; justify-content:space-between; gap:16px; }
+    .box { flex:1; background:#f7f7fb; padding:10px; border-radius:8px; }
+  </style>
+</head>
+<body>
+  <div class="ticket">
+    <div class="header">
+      <div>
+        <div class="title">{{ ingresso.lote.evento.nome ?? 'Evento' }}</div>
+        <div class="meta">Pedido #{{ ingresso.pedido.id }} • Cliente: {{ ingresso.pedido.cliente.nomeCompleto }}</div>
+        <div class="meta">Lote: {{ ingresso.lote.nome }} • Valor: R$ {{ ingresso.valorPago }}</div>
+        <div class="meta">Código: {{ ingresso.identificadorUnico ?? ingresso.codigoUnico }}</div>
+      </div>
+      <div class="qr">
+        <img src="{{ qrImageDataUri }}" alt="QR"/>
+      </div>
+    </div>
+    <div class="row">
+      <div class="box">Data/Hora: {{ ingresso.lote.evento.dataHoraInicio|date('d/m/Y H:i') }}</div>
+      <div class="box">Local: {{ ingresso.lote.evento.local }}</div>
+    </div>
+  </div>
+</body>
+</html>

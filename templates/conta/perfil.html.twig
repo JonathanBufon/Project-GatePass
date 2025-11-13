@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+{% block title %}Meu Perfil - GatePass{% endblock %}
+{% block main_content %}
+<h1 class="h4 mb-4">Meu Perfil</h1>
+<div class="card"><div class="card-body">
+  {{ form_start(perfilForm, {'attr': {'novalidate': 'novalidate'}}) }}
+    <div class="row g-3">
+      <div class="col-md-6">{{ form_row(perfilForm.nomeCompleto) }}</div>
+      <div class="col-md-6">{{ form_row(perfilForm.email) }}</div>
+      <div class="col-md-4">{{ form_row(perfilForm.cpf) }}</div>
+    </div>
+    <button class="btn btn-primary mt-3" type="submit">Salvar Alterações</button>
+  {{ form_end(perfilForm) }}
+</div></div>
+{% endblock %}

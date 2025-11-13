@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+{% block title %}Novo Lote - GatePass{% endblock %}
+{% block main_content %}
+<h1 class="h4 mb-4">Criar Lote — {{ evento.nome }}</h1>
+<div class="card"><div class="card-body">
+  {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    <div class="row g-3">
+      <div class="col-md-6">{{ form_row(form.nome) }}</div>
+      <div class="col-md-6">{{ form_row(form.preco) }}</div>
+      <div class="col-md-4">{{ form_row(form.quantidadeTotal) }}</div>
+      <div class="col-md-4">{{ form_row(form.dataInicioVendas) }}</div>
+      <div class="col-md-4">{{ form_row(form.dataFimVendas) }}</div>
+    </div>
+    <button class="btn btn-primary mt-3" type="submit">Salvar Lote</button>
+    <a href="{{ path('app_vendedor_evento_editar', {id: evento.id}) }}" class="btn btn-outline-light mt-3">Voltar</a>
+  {{ form_end(form) }}
+</div></div>
+{% endblock %}

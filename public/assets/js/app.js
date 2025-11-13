@@ -11,18 +11,29 @@
     if (timerEl) {
       var expiraIso = timerEl.getAttribute('data-expira-em');
       var expira = expiraIso ? new Date(expiraIso) : null;
+      var form = document.querySelector('[data-checkout-form]');
+      var submitBtn = document.querySelector('[data-checkout-submit]');
+      var alertEl = document.getElementById('reserva-expirada-alert');
+      var expired = false;
       var out = function(ms){ var s=Math.max(0, Math.floor(ms/1000)); var m=Math.floor(s/60); var r=s%60; return (m<10?'0':'')+m+':'+(r<10?'0':'')+r; };
+      var onExpire = function(){
+        if (expired) return;
+        expired = true;
+        timerEl.textContent = '00:00';
+        timerEl.classList.add('text-warning');
+        if (alertEl) alertEl.classList.remove('d-none');
+        if (submitBtn) { submitBtn.setAttribute('disabled','disabled'); submitBtn.classList.add('disabled'); }
+      };
       var tick = function(){
         if(!expira) return;
         var now = new Date();
         var diff = expira - now;
-        if (diff <= 0) {
-          timerEl.textContent = '00:00';
-          timerEl.classList.add('text-warning');
-          return;
-        }
+        if (diff <= 0) { onExpire(); return; }
         timerEl.textContent = out(diff);
       };
+      if (form) {
+        form.addEventListener('submit', function(e){ if (expired) { e.preventDefault(); e.stopPropagation(); } });
+      }
       tick();
       setInterval(tick, 1000);
     }

@@ -9,13 +9,16 @@
       <div class="text-muted">Reserva expira em: <span data-expira-em="{{ pedido.expiraEm|date('c') }}">--:--</span></div>
     {% endif %}
   </div></div>
+  <div id="reserva-expirada-alert" class="alert alert-warning d-none" role="alert">
+    Sua reserva expirou. Os ingressos foram liberados. Recomece a seleção para continuar.
+  </div>
 {% endif %}
 {% if checkoutForm is defined %}
   <div class="row g-4">
     <div class="col-md-7">
-      <div class="card"><div class="card-body">{{ form_start(checkoutForm, {'action': path('app_checkout_submit'), 'method': 'POST'}) }}
+      <div class="card"><div class="card-body">{{ form_start(checkoutForm, {'action': path('app_checkout_submit'), 'method': 'POST', 'attr': {'data-checkout-form': '1'}}) }}
         {{ form_widget(checkoutForm) }}
-        <button class="btn btn-primary mt-3">Continuar</button>
+        <button class="btn btn-primary mt-3" data-checkout-submit>Continuar</button>
       {{ form_end(checkoutForm) }}</div></div>
     </div>
   </div>

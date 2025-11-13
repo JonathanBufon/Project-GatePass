@@ -4,7 +4,7 @@ namespace App\Service;
 
 use App\Entity\Pedido;
 use App\Dto\CheckoutDto;
-use App\Message\PurchaseConfirmedMessage;
+use App\Message\PedidoPagoMessage;
 use App\Port\Payment\PaymentGatewayInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -48,18 +48,10 @@ class PagamentoService
 
         if ($sucessoPagamento) {
             // 3. Regra de Negócio: Atualiza status (Camada 1 - Entidade)
-            $pedido->setStatus('APROVADO');
+            $pedido->setStatus('PAGO');
 
-            // Ativa os ingressos
-            foreach ($pedido->getIngressos() as $ingresso) {
-                if ($ingresso->getStatus() === 'RESERVADO') {
-                    $ingresso->setStatus('DISPONIVEL'); // Pronto para uso (ex: QR Code)
-                    $this->em->persist($ingresso);
-                }
-            }
-
-            // Dispara mensagem assíncrona de confirmação
-            $this->bus->dispatch(new PurchaseConfirmedMessage($pedido->getId()));
+            // Dispara mensagem assíncrona para geração/entrega de ingressos
+            $this->bus->dispatch(new PedidoPagoMessage($pedido->getId()));
 
         } else {
             // 4. Pagamento falhou

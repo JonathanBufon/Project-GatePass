@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+{% block title %}Erro {{ status_code }} - {{ status_text }}{% endblock %}
+{% block main_content %}
+<div class="d-flex min-vh-100 align-items-center justify-content-center py-5">
+  <div class="text-center" style="max-width:640px;">
+    <div class="display-4 fw-bold mb-2">{{ status_code }}</div>
+    <div class="h5 mb-3">{{ status_text }}</div>
+    <p class="text-muted mb-4">{% block error_message %}Ocorreu um erro. Nossa equipe foi notificada.{% endblock %}</p>
+    <a class="btn btn-primary" href="{{ path('app_home') }}">Voltar para a Página Inicial</a>
+  </div>
+</div>
+{% endblock %}

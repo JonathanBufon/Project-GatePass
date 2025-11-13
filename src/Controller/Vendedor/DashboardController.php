@@ -38,9 +38,26 @@ class DashboardController extends AbstractController
         }
 
         $eventos = $this->eventoService->getEventosPorVendedor($vendedor);
+
+        $totalEventos = count($eventos);
+        $publicados = 0; $rascunhos = 0; $ingressosAtivos = 0; $totalLotes = 0;
+        foreach ($eventos as $ev) {
+            if ($ev->getStatus() && $ev->getStatus()->name === 'PUBLICADO') { $publicados++; }
+            if ($ev->getStatus() && $ev->getStatus()->name === 'RASCUNHO') { $rascunhos++; }
+            $totalLotes += $ev->getLotes()->count();
+            foreach ($ev->getLotes() as $l) { if (method_exists($l, 'getQuantidadeVendida')) { $ingressosAtivos += $l->getQuantidadeVendida(); } }
+        }
+
         return $this->render('vendedor/dashboard/index.html.twig', [
             'eventos' => $eventos,
             'vendedor' => $vendedor,
+            'stats' => [
+                'totalEventos' => $totalEventos,
+                'publicados' => $publicados,
+                'rascunhos' => $rascunhos,
+                'totalLotes' => $totalLotes,
+                'ingressosAtivos' => $ingressosAtivos,
+            ],
         ]);
     }
 }

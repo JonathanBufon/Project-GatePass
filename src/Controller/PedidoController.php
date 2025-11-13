@@ -82,6 +82,11 @@ class PedidoController extends AbstractController
             return $this->redirectToRoute('app_home');
         }
 
+        if (method_exists($pedidoPendente, 'isExpirado') && $pedidoPendente->isExpirado()) {
+            $this->addFlash('warning', 'Sua reserva expirou. Os ingressos foram liberados. Selecione novamente os ingressos.');
+            return $this->redirectToRoute('app_evento_index');
+        }
+
         $form = $this->createForm(CheckoutFormType::class);
 
         return $this->render('pedido/checkout.html.twig', [
@@ -104,6 +109,11 @@ class PedidoController extends AbstractController
         if (!$pedido) {
             $this->addFlash('error', 'Seu carrinho expirou ou está vazio.');
             return $this->redirectToRoute('app_home');
+        }
+
+        if (method_exists($pedido, 'isExpirado') && $pedido->isExpirado()) {
+            $this->addFlash('warning', 'Não foi possível finalizar: a reserva do seu pedido expirou. Selecione novamente os ingressos.');
+            return $this->redirectToRoute('app_evento_index');
         }
 
         $form = $this->createForm(CheckoutFormType::class);

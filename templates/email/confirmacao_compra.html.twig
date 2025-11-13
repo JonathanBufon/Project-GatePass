@@ -1,0 +1,10 @@
+<div style="font-family:Arial,Helvetica,sans-serif; font-size:14px; color:#222;">
+  <h1 style="font-size:18px; margin:0 0 12px;">Compra confirmada!</h1>
+  <p>Olá {{ pedido.cliente.nomeCompleto }},</p>
+  <p>Seu pagamento do pedido #{{ pedido.id }} foi confirmado. Em anexo, estão seus ingressos em PDF.</p>
+  <p><strong>Evento:</strong> {{ pedido.ingressos|first ? (pedido.ingressos|first).lote.evento.nome : '—' }}<br>
+     <strong>Data/Hora:</strong> {{ pedido.ingressos|first ? ((pedido.ingressos|first).lote.evento.dataHoraInicio|date('d/m/Y H:i')) : '—' }}<br>
+     <strong>Local:</strong> {{ pedido.ingressos|first ? (pedido.ingressos|first).lote.evento.local : '—' }}</p>
+  <p>Caso não visualize os anexos, aguarde alguns instantes e tente novamente. Este processo é assíncrono e pode levar alguns segundos.</p>
+  <p>Obrigado por comprar com a GatePass!</p>
+</div>

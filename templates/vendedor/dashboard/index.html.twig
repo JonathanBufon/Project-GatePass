@@ -1,23 +1,81 @@
 {% extends 'base.html.twig' %}
 {% block title %}Dashboard do Vendedor - GatePass{% endblock %}
 {% block main_content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-  <h1 class="h4 mb-0">Meus Eventos</h1>
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h4 mb-0">Dashboard</h1>
   <a href="{{ path('app_vendedor_evento_novo') }}" class="btn btn-primary btn-lg">Criar Novo Evento</a>
 </div>
+
+{% if stats is defined %}
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-3">
+    <div class="card text-bg-dark h-100"><div class="card-body">
+      <div class="text-muted">Eventos</div>
+      <div class="fs-4">{{ stats.totalEventos }}</div>
+    </div></div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card text-bg-dark h-100"><div class="card-body">
+      <div class="text-muted">Publicados</div>
+      <div class="fs-4">{{ stats.publicados }}</div>
+    </div></div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card text-bg-dark h-100"><div class="card-body">
+      <div class="text-muted">Rascunhos</div>
+      <div class="fs-4">{{ stats.rascunhos }}</div>
+    </div></div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card text-bg-dark h-100"><div class="card-body">
+      <div class="text-muted">Ingressos Ativos</div>
+      <div class="fs-4">{{ stats.ingressosAtivos }}</div>
+    </div></div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card text-bg-dark h-100"><div class="card-body">
+      <div class="text-muted">Total Lotes</div>
+      <div class="fs-4">{{ stats.totalLotes }}</div>
+    </div></div>
+  </div>
+</div>
+{% endif %}
+
+<h2 class="h5 mb-3">Meus Eventos</h2>
 <div class="row row-cols-1 row-cols-md-2 g-3">
   {% for evento in eventos %}
   <div class="col">
     <div class="card h-100">
       <div class="card-body">
-        <h5 class="card-title mb-1">{{ evento.nome }}</h5>
-        <p class="text-muted mb-2">{{ evento.dataHoraInicio|date('d/m/Y H:i') }} • {{ evento.local }}</p>
-        <a href="{{ path('app_vendedor_evento_editar', {id: evento.id}) }}" class="btn btn-outline-primary btn-sm">Editar</a>
-        <a href="{{ path('app_vendedor_lote_novo', {evento: evento.id}) }}" class="btn btn-primary btn-sm">Adicionar Lote</a>
-        <form class="d-inline" method="post" action="{{ path('app_vendedor_evento_publicar', {id: evento.id}) }}">
-          <input type="hidden" name="_token" value="{{ csrf_token('publicar' ~ evento.id) }}">
-          <button class="btn btn-success btn-sm" type="submit">Publicar</button>
-        </form>
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <h5 class="card-title mb-1">{{ evento.nome }}</h5>
+            <p class="text-muted mb-2">{{ evento.dataHoraInicio|date('d/m/Y H:i') }} • {{ evento.local }}</p>
+          </div>
+          <div>
+            {% if evento.status and evento.status.name == 'PUBLICADO' %}
+              <span class="badge bg-success">Publicado</span>
+            {% elseif evento.status and evento.status.name == 'RASCUNHO' %}
+              <span class="badge bg-secondary">Rascunho</span>
+            {% else %}
+              <span class="badge bg-dark">{{ evento.status ? evento.status.name : '—' }}</span>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="small text-muted mb-3">Lotes: {{ evento.lotes|length }}</div>
+
+        {% set isRascunho = evento.status and evento.status.name == 'RASCUNHO' %}
+        {% if isRascunho %}
+          <a href="{{ path('app_vendedor_evento_editar', {id: evento.id}) }}" class="btn btn-outline-primary btn-sm">Editar</a>
+        {% endif %}
+        <a href="{{ path('app_vendedor_lote_index', {evento: evento.id}) }}" class="btn btn-primary btn-sm">Gerenciar Lotes</a>
+        {% if isRascunho %}
+          <form class="d-inline" method="post" action="{{ path('app_vendedor_evento_publicar', {id: evento.id}) }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('publicar' ~ evento.id) }}">
+            <button class="btn btn-success btn-sm" type="submit">Publicar</button>
+          </form>
+        {% endif %}
       </div>
     </div>
   </div>

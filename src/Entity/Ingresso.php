@@ -17,6 +17,9 @@ class Ingresso
     #[ORM\Column(length: 255, unique: true)]
     private ?string $codigoUnico = null;
 
+    #[ORM\Column(length: 36, unique: true, nullable: true)]
+    private ?string $identificadorUnico = null;
+
     #[ORM\Column(length: 50)]
     private ?string $status = null;
 
@@ -31,6 +34,9 @@ class Ingresso
     #[ORM\JoinColumn(nullable: false)]
     private ?Lote $lote = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $filePath = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -44,6 +50,18 @@ class Ingresso
     public function setCodigoUnico(string $codigoUnico): static
     {
         $this->codigoUnico = $codigoUnico;
+
+        return $this;
+    }
+
+    public function getIdentificadorUnico(): ?string
+    {
+        return $this->identificadorUnico;
+    }
+
+    public function setIdentificadorUnico(?string $identificadorUnico): static
+    {
+        $this->identificadorUnico = $identificadorUnico;
 
         return $this;
     }
@@ -92,6 +110,18 @@ class Ingresso
     public function setLote(?Lote $lote): static
     {
         $this->lote = $lote;
+
+        return $this;
+    }
+
+    public function getFilePath(): ?string
+    {
+        return $this->filePath;
+    }
+
+    public function setFilePath(?string $filePath): static
+    {
+        $this->filePath = $filePath;
 
         return $this;
     }

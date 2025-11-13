@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+{% block title %}Lotes — {{ evento.nome }}{% endblock %}
+{% block main_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1 class="h4 mb-0">Lotes — {{ evento.nome }}</h1>
+  <a href="{{ path('app_vendedor_lote_novo', {evento: evento.id}) }}" class="btn btn-primary">Novo Lote</a>
+</div>
+{% if lotes is not empty %}
+  <div class="table-responsive">
+    <table class="table table-striped align-middle">
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th class="text-end">Preço (R$)</th>
+          <th class="text-end">Qtd Total</th>
+          <th class="text-end">Vendidos/Reservados</th>
+          <th>Janela de Vendas</th>
+          <th class="text-end">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for lote in lotes %}
+        <tr>
+          <td>{{ lote.nome }}</td>
+          <td class="text-end">{{ lote.preco }}</td>
+          <td class="text-end">{{ lote.quantidadeTotal }}</td>
+          <td class="text-end">{{ lote.quantidadeVendida }}</td>
+          <td>
+            {% if lote.dataInicioVendas %}{{ lote.dataInicioVendas|date('d/m/Y H:i') }}{% else %}-{% endif %}
+            —
+            {% if lote.dataFimVendas %}{{ lote.dataFimVendas|date('d/m/Y H:i') }}{% else %}-{% endif %}
+          </td>
+          <td class="text-end">
+            <form method="post" action="{{ path('app_vendedor_lote_excluir', {id: lote.id}) }}" class="d-inline" onsubmit="return confirm('Confirma excluir este lote?');">
+              <input type="hidden" name="_token" value="{{ csrf_token('del-lote-' ~ lote.id) }}">
+              <button type="submit" class="btn btn-outline-danger btn-sm">Excluir</button>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <div class="text-muted">Nenhum lote cadastrado ainda.</div>
+{% endif %}
+<a href="{{ path('app_vendedor_evento_editar', {id: evento.id}) }}" class="btn btn-outline-light mt-3">Voltar ao Evento</a>
+{% endblock %}
